@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Prompt Directory</title>
+    <link rel="stylesheet" href="style.css?v=999">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="header-container">
+            <a href="#" class="logo">✨ PromptChom</a>
+            <nav class="nav-links">
+                <a href="#" id="homeLink">หน้าแรก</a>
+                <a href="#" id="gemsLink">💎 ระบบ Gem</a>
+                
+                <div class="dropdown">
+                    <a href="#" class="dropbtn">หมวดหมู่ <span style="font-size: 0.7em;">▼</span></a>
+                    <div class="dropdown-content">
+                        <a href="#" class="btn-filter active" onclick="filterCategory('all', this); return false;">ทั้งหมด</a>
+                        <a href="#" class="btn-filter" onclick="filterCategory('favorites', this); return false;">❤️ รายการโปรด</a>
+                        <a href="#" class="btn-filter" onclick="filterCategory('image-gen', this); return false;">🎨 สร้างภาพ AI</a>
+                        <a href="#" class="btn-filter" onclick="filterCategory('marketing', this); return false;">📈 การตลาด</a>
+                        <a href="#" class="btn-filter" onclick="filterCategory('education', this); return false;">🎓 การเรียน</a>
+                        <a href="#" class="btn-filter" onclick="filterCategory('coding', this); return false;">💻 การเขียนโค้ด</a>
+                        <a href="#" class="btn-filter" onclick="filterCategory('creative', this); return false;">✍️ งานสร้างสรรค์</a>
+                        <a href="#" class="btn-filter" onclick="filterCategory('productivity', this); return false;">💼 การทำงาน</a>
+                    </div>
+                </div>
+                
+                <a href="#">ติดต่อเรา</a>
+                <button id="themeToggle" class="btn-theme">🌙</button>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero-banner">
+        <h1>AI Prompt Directory</h1>
+        <p>คลังคำสั่ง AI คัดมาแล้วว่าปัง แค่ก๊อปปี้ก็เอาไปใช้งานได้เลย!</p>
+    </section>
+
+    <main class="main-content">
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="🔍 ค้นหาคำสั่ง เช่น 'แคปชั่น', 'สรุป'..." onkeyup="searchPrompts()">
+        </div>
+        
+        <div class="ai-links-container">
+            <span class="ai-links-title">🚀 เปิดใช้งาน AI ด่วน:</span>
+            <a href="https://chatgpt.com/" target="_blank" class="ai-link btn-chatgpt">
+                <span class="icon">💬</span> ChatGPT
+            </a>
+            <a href="https://gemini.google.com/" target="_blank" class="ai-link btn-gemini">
+                <span class="icon">✨</span> Gemini
+            </a>
+            <a href="https://claude.ai/" target="_blank" class="ai-link btn-claude">
+                <span class="icon">🧠</span> Claude
+            </a>
+        </div>
+
+        <section id="gems-page" style="display: none;">
+            <div class="hero-banner gems-banner">
+                <span class="badge badge-creative">ระบบรางวัล</span>
+                <h1>💰 คลัง Gem ของคุณ</h1>
+                <p>สะสมและปลดล็อก Gem เพื่อรับสิทธิพิเศษที่แตกต่าง!</p>
+            </div>
+
+            <div class="category-container gems-status-container">
+                <button class="btn-filter active">💎 Gem ของฉัน: 150</button>
+            </div>
+
+            <div class="search-container gem-info-card">
+                <h2 style="margin-top: 0;">✨ Gem คืออะไร?</h2>
+                <p><b>Gem</b> คือแต้มสะสมพิเศษภายในแพลตฟอร์ม PromptHub ที่มอบให้กับผู้ใช้งานเพื่อใช้เป็นรางวัลจากการใช้งานคลังคำสั่งของเรา ยิ่งคุณใช้งาน หรือมีส่วนร่วมมากเท่าไหร่ คุณจะได้รับ Gem มากขึ้นเท่านั้น</p>
+                
+                <h2>🛠️ วิธีการใช้งานและรับ Gem</h2>
+                <p>* <b>Daily Login:</b> เพียงเข้ามาใช้งานเว็บทุกวัน ก็รับ Gem ไปเลย!</p>
+                <p>* <b>Copy & Use:</b> ทุกครั้งที่คุณก๊อปปี้คำสั่ง Système มอบ Gem ให้อัตโนมัติ</p>
+                <p>* <b>Share Knowledge:</b> แชร์ Prompt ไปยัง Social Media ของคุณ ได้รับโบนัส Gem!</p>
+            </div>
+
+            <div class="search-container gem-info-card">
+                <h2>🎁 รายการระดับรางวัล (Gem Tiers)</h2>
+                <p>ปลดล็อกระดับใหม่ๆ ด้วย Gem ของคุณ!</p>
+            </div>
+
+            <div class="gem-list-container">
+                <div class="gem-list-item tier-sapphire">
+                    <div class="gem-info">
+                        <img src="https://cdn-icons-png.flaticon.com/512/10002/10002446.png" alt="Icon 1" class="gem-icon">
+                        <div class="gem-text-group">
+                            <span class="gem-name">Gem Genesis</span>
+                            <span class="gem-symbol">เริ่มต้นสะสม</span>
+                        </div>
+                    </div>
+                    <span class="gem-level">เลเวล 1</span>
+                </div>
+
+                <div class="gem-list-item tier-amethyst">
+                    <div class="gem-info">
+                        <img src="https://cdn-icons-png.flaticon.com/512/10002/10002361.png" alt="Icon 2" class="gem-icon">
+                        <div class="gem-text-group">
+                            <span class="gem-name">Prompt Sapphire</span>
+                            <span class="gem-symbol">ผู้ใช้ระดับสูง</span>
+                        </div>
+                    </div>
+                    <span class="gem-level">เลเวล 5</span>
+                </div>
+
+                <div class="gem-list-item tier-diamond">
+                    <div class="gem-info">
+                        <img src="https://cdn-icons-png.flaticon.com/512/10002/10002425.png" alt="Icon 3" class="gem-icon">
+                        <div class="gem-text-group">
+                            <span class="gem-name">AI Amethyst</span>
+                            <span class="gem-symbol">คลังคัดสรรพิเศษ</span>
+                        </div>
+                    </div>
+                    <span class="gem-level">เลเวล 10+</span>
+                </div>
+            </div>
+        </section>
+        </div>
+
+        <div class="prompt-grid" id="prompt-container">
+            </div>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 AI Prompt Directory. ออกแบบและพัฒนาด้วยความตั้งใจ</p>
+    </footer>
+
+    <div id="toast" class="toast">✅ คัดลอกคำสั่งสำเร็จ!</div>
+    <button id="backToTop" class="btn-back-to-top">⬆️</button>
+    <script src="script.js"></script>
+</body>
+</html>

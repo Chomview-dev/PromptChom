@@ -1,0 +1,87 @@
+[
+    {
+        "id": "prompt-1",
+        "categoryId": "marketing",
+        "categoryName": "การตลาด",
+        "badgeColor": "badge-marketing",
+        "title": "แคปชั่นขายของให้น่าสนใจ",
+        "content": "สวมบทบาทเป็นนักการตลาดมือฉมัง ช่วยเขียนแคปชั่นขาย [ชื่อสินค้า] ให้ดูน่าตื่นเต้น และจบด้วย Call to Action ที่ทำให้คนอยากทักแชททันที"
+    },
+    {
+        "id": "prompt-2",
+        "categoryId": "education",
+        "categoryName": "การเรียน",
+        "badgeColor": "badge-education",
+        "title": "สรุปบทความให้เข้าใจง่าย",
+        "content": "ช่วยสรุปข้อความต่อไปนี้ให้เป็นหัวข้อย่อยแบบ Bullet Points โดยเน้นเฉพาะใจความสำคัญที่เด็กอายุ 12 ขวบก็เข้าใจได้: [วางข้อความของคุณตรงนี้]"
+    },
+    {
+        "id": "prompt-3",
+        "categoryId": "coding",
+        "categoryName": "การเขียนโค้ด",
+        "badgeColor": "badge-coding",
+        "title": "หาจุดผิดพลาดในโค้ด (Debug)",
+        "content": "ฉันเขียนโค้ดชุดนี้แล้วทำงานไม่ได้ ช่วยตรวจสอบหาบั๊ก และอธิบายวิธีแก้ไขให้ฉันเข้าใจอย่างละเอียด: [วางโค้ดของคุณตรงนี้]"
+    },
+    {
+        "id": "prompt-4",
+        "categoryId": "creative",
+        "categoryName": "งานสร้างสรรค์",
+        "badgeColor": "badge-creative",
+        "title": "ร่างสคริปต์วิดีโอ YouTube",
+        "content": "ช่วยเขียนสคริปต์วิดีโอความยาว 5 นาทีสำหรับทำลง YouTube ในหัวข้อ [ใส่หัวข้อ] โดยขอเปิดเรื่องให้น่าดึงดูดใจ และแบ่งโครงเรื่องเป็นช่วงๆ"
+    },
+    {
+        "id": "prompt-5",
+        "categoryId": "productivity",
+        "categoryName": "การทำงาน",
+        "badgeColor": "badge-productivity",
+        "title": "เขียนอีเมลลากิจภาษาอังกฤษแบบโปร",
+        "content": "ช่วยเขียนอีเมลลากิจเป็นภาษาอังกฤษที่เป็นทางการ เพื่อส่งถึงหัวหน้างาน โดยแจ้งว่าขอลากิจเนื่องจาก [เหตุผลการลา] ระหว่างวันที่ [วันที่] ถึง [วันที่]"
+    },
+    {   
+        "id": "prompt-6",
+        "categoryId": "marketing",
+        "categoryName": "การตลาด",
+        "badgeColor": "badge-marketing",
+        "title": "วางแผนธุรกิจร้านกาแฟแบบเจาะลึก",
+        "content": "สวมบทบาทเป็นผู้เชี่ยวชาญด้านการวางแผนธุรกิจและการตลาดดิจิทัล ฉันต้องการให้คุณช่วยวิเคราะห์และเขียนแผนธุรกิจแบบเจาะลึกสำหรับร้านกาแฟสเปเชียลตี้ (Specialty Coffee) ที่มีจุดเด่นเรื่องเมล็ดกาแฟนำเข้าและเบเกอรี่โฮมเมด โดยขอให้คุณแบ่งรายละเอียดออกเป็น 5 ส่วนหลักๆ ได้แก่ 1. บทสรุปผู้บริหารและวิสัยทัศน์ของร้าน 2. การวิเคราะห์กลุ่มเป้าหมาย (Persona) อย่างละเอียด ทั้งอายุ อาชีพ และไลฟ์สไตล์ 3. กลยุทธ์การตลาดออนไลน์ เช่น การทำคอนเทนต์บน TikTok และ Instagram Reels เพื่อดึงดูดลูกค้าวัยรุ่นและวัยทำงาน 4. แผนการจัดโปรโมชั่นในช่วง 3 เดือนแรกหลังเปิดร้านเพื่อสร้างฐานลูกค้าประจำ และ 5. การประเมินความเสี่ยงและวิธีรับมือหากเกิดปัญหาวัตถุดิบขาดแคลน ช่วยเขียนอธิบายแต่ละหัวข้อให้ครอบคลุมและสามารถนำไปใช้พรีเซนต์ขอสินเชื่อกับธนาคารได้จริง"
+    }
+    ,
+    {
+        "id": "prompt-7",
+        "categoryId": "image-gen",
+        "categoryName": "สร้างภาพ AI",
+        "badgeColor": "badge-creative",
+        "title": "ภาพสาวสไตล์ Cyberpunk",
+        "imageUrl": "https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=600&auto=format&fit=crop",
+        "content": "A highly detailed portrait of a beautiful cyberpunk girl, glowing neon lights, futuristic city background, realistic, 8k, Unreal Engine 5 render --ar 16:9"
+    },
+    {
+        "id": "prompt-8",
+        "categoryId": "image-gen",
+        "categoryName": "สร้างภาพ AI",
+        "badgeColor": "badge-creative",
+        "title": "ภาพวิวธรรมชาติ แฟนตาซี",
+        "imageUrl": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop",
+        "content": "A breathtaking fantasy landscape, floating islands, waterfalls, majestic glowing tree in the center, cinematic lighting, magical atmosphere, hyper-detailed --v 6.0"
+    },
+    {
+        "id": "prompt-1",
+        "categoryId": "marketing",
+        "categoryName": "การตลาด",
+        "badgeColor": "badge-marketing",
+        "title": "แคปชั่นขายของให้น่าสนใจ",
+        "description": "ใช้สำหรับสร้างแคปชั่นขายสินค้าบนโซเชียลมีเดีย เน้นกระตุ้นให้ลูกค้าอยากทักแชททันที",
+        "content": "สวมบทบาทเป็นนักการตลาดมือฉมัง ช่วยเขียนแคปชั่นขาย [ชื่อสินค้า] ให้ดูน่าตื่นเต้น และจบด้วย Call to Action ที่ทำให้คนอยากทักแชททันที"
+    },
+    {
+        "id": "prompt-2",
+        "categoryId": "education",
+        "categoryName": "การเรียน",
+        "badgeColor": "badge-education",
+        "title": "สรุปบทความให้เข้าใจง่าย",
+        "description": "ใช้ย่อบทความหรือเอกสารยาวๆ ให้กลายเป็นหัวข้อย่อย (Bullet) อ่านจบเข้าใจง่ายใน 1 นาที",
+        "content": "ช่วยสรุปข้อความต่อไปนี้ให้เป็นหัวข้อย่อยแบบ Bullet Points โดยเน้นเฉพาะใจความสำคัญที่เด็กอายุ 12 ขวบก็เข้าใจได้: [วางข้อความของคุณตรงนี้]"
+    }
+]
