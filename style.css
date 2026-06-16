@@ -39,6 +39,11 @@ body {
     text-decoration: none;
 }
 
+.nav-links {
+    display: flex;
+    align-items: center;
+}
+
 .nav-links a {
     margin-left: 24px;
     text-decoration: none;
@@ -107,6 +112,7 @@ body {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s, box-shadow 0.2s;
     animation: fadeInUp 0.4s ease-out forwards;
+    position: relative; 
 }
 
 .prompt-card:hover {
@@ -157,7 +163,7 @@ body {
 .prompt-box-container::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
 .prompt-box-container::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 
-/* 🔥 ปุ่มคัดลอก (อัปเดตระบบไอคอนแล้ว) 🔥 */
+/* ปุ่มคัดลอกคำสั่ง */
 .btn-copy {
     background-color: #9333EA;
     color: #FFFFFF;
@@ -169,8 +175,6 @@ body {
     cursor: pointer;
     margin-top: 20px;
     transition: all 0.3s ease;
-    
-    /* จัดไอคอนให้อยู่กึ่งกลางคู่กับข้อความ */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -185,75 +189,8 @@ body {
     transform: scale(0.98);
 }
 
-/* สีปุ่มตอนก๊อปปี้สำเร็จ */
 .btn-copy.copied {
     background-color: #16A34A !important;
-}
-
-/* =========================================
-   แถบปุ่มหมวดหมู่ (Category Filter Menu)
-========================================= */
-.category-container {
-    display: grid;
-    /* แบ่งเป็น 3 คอลัมน์ (ปรับเลข 3 เป็น 4 ได้ถ้าอยากให้เล็กลง) */
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 16px;
-    max-width: 800px;
-    margin: 0 auto 40px auto;
-}
-
-/* ปรับให้มือถือแสดงแค่ 2 คอลัมน์ */
-@media (max-width: 768px) {
-    .category-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-.btn-filter {
-    background-color: #FFFFFF;
-    color: #475569;
-    border: 1px solid #E2E8F0;
-    padding: 16px 12px;
-    border-radius: 12px; /* ปรับให้เป็นทรงสี่เหลี่ยมขอบมนแบบในรูป */
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: center;
-}
-
-.btn-filter:hover {
-    background-color: #F8FAFC;
-    color: #1E3A8A;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
-
-.btn-filter.active {
-    background-color: #1E3A8A; /* ใช้สีน้ำเงินเข้มให้ดูโปรขึ้น */
-    color: #FFFFFF;
-    border-color: #1E3A8A;
-    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
-}
-
-/* -----------------------------------------
-   รองรับโหมดมืด (Dark Mode) สำหรับปุ่มหมวดหมู่ใหม่
------------------------------------------ */
-body.dark-mode .btn-filter {
-    background-color: #1E293B; /* สีพื้นหลังสไตล์เว็บ PromptDee */
-    border-color: #334155;
-    color: #CBD5E1;
-}
-
-body.dark-mode .btn-filter:hover {
-    background-color: #334155;
-    color: #F8FAFC;
-}
-
-body.dark-mode .btn-filter.active {
-    background-color: #A855F7; /* สีม่วงเด่นตอนถูกเลือก */
-    border-color: #A855F7;
-    color: #FFFFFF;
 }
 
 /* =========================================
@@ -296,19 +233,26 @@ body.dark-mode .btn-filter.active {
    ปุ่มสลับโหมดมืด (Dark Mode Toggle)
 ========================================= */
 .btn-theme {
-    background: none;
-    border: none;
-    font-size: 1.25rem;
-    cursor: pointer;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #F1F5F9;
+    color: #475569;
+    transition: all 0.2s ease;
     margin-left: 24px;
-    transition: transform 0.2s;
+    border: none;
+    cursor: pointer;
 }
 
-.btn-theme:hover { transform: scale(1.15); }
+.btn-theme:hover {
+    background-color: #E2E8F0;
+    transform: rotate(15deg) scale(1.1);
+}
 
-/* =========================================
-   โทนสีสำหรับโหมดมืด (Dark Theme)
-========================================= */
+/* โทนสีสำหรับโหมดมืด (Dark Theme) */
 body.dark-mode { background-color: #0F172A; color: #F8FAFC; }
 body.dark-mode .site-header { background-color: #1E293B; border-bottom: 1px solid #334155; box-shadow: none; }
 body.dark-mode .logo { color: #F8FAFC; }
@@ -319,15 +263,12 @@ body.dark-mode .prompt-card { background-color: #1E293B; border-color: #334155; 
 body.dark-mode .prompt-card h3 { color: #F8FAFC; }
 body.dark-mode .prompt-box-container { background-color: #0F172A; border-color: #334155; }
 body.dark-mode .prompt-box { color: #CBD5E1; }
-
-body.dark-mode .btn-filter { background-color: #1E293B; border-color: #334155; color: #CBD5E1; }
-body.dark-mode .btn-filter:hover { background-color: #334155; color: #F8FAFC; }
-body.dark-mode .btn-filter.active { background-color: #9333EA; border-color: #9333EA; color: #FFFFFF; }
 body.dark-mode #searchInput { background-color: #1E293B; border-color: #334155; color: #F8FAFC; }
 
 body.dark-mode .prompt-box-container::-webkit-scrollbar-track { background: #0F172A; }
 body.dark-mode .prompt-box-container::-webkit-scrollbar-thumb { background: #334155; }
 body.dark-mode .prompt-box-container::-webkit-scrollbar-thumb:hover { background: #475569; }
+body.dark-mode .btn-theme { background-color: #334155; color: #FACC15; }
 
 /* =========================================
    ปุ่มเลื่อนกลับขึ้นบนสุด (Back to Top Button)
@@ -342,7 +283,7 @@ body.dark-mode .prompt-box-container::-webkit-scrollbar-thumb:hover { background
     background-color: #9333EA;
     color: #FFFFFF;
     border: none;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     cursor: pointer;
     box-shadow: 0 4px 14px rgba(147, 51, 234, 0.3);
     z-index: 999;
@@ -362,8 +303,6 @@ body.dark-mode .prompt-box-container::-webkit-scrollbar-thumb:hover { background
 }
 
 .btn-back-to-top:hover { background-color: #7E22CE; transform: translateY(-4px); }
-.btn-back-to-top:active { transform: scale(0.95); }
-
 body.dark-mode .btn-back-to-top { background-color: #A855F7; box-shadow: 0 4px 14px rgba(168, 85, 247, 0.2); }
 body.dark-mode .btn-back-to-top:hover { background-color: #9333EA; }
 
@@ -404,7 +343,7 @@ body.dark-mode .toast { background-color: #15803D; }
     align-items: center;
     gap: 12px;
     margin-bottom: 30px;
-    flex-wrap: wrap; /* รองรับหน้าจอมือถือให้ปุ่มตัดบรรทัดเอง */
+    flex-wrap: wrap;
 }
 
 .ai-links-title {
@@ -416,7 +355,7 @@ body.dark-mode .toast { background-color: #15803D; }
 .ai-link {
     text-decoration: none;
     padding: 8px 16px;
-    border-radius: 9999px; /* ปุ่มแคปซูล */
+    border-radius: 9999px;
     font-weight: 600;
     font-size: 0.875rem;
     color: #FFFFFF;
@@ -431,20 +370,13 @@ body.dark-mode .toast { background-color: #15803D; }
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* สีประจำแบรนด์ AI */
-.btn-chatgpt { background-color: #10A37F; } /* เขียว OpenAI */
-.btn-gemini { background: linear-gradient(90deg, #1A73E8, #8AB4F8); } /* น้ำเงินไล่สี Google */
-.btn-claude { background-color: #D97757; } /* ส้มอิฐ Anthropic */
-
-/* -----------------------------------------
-   รองรับโหมดมืด (Dark Mode) สำหรับปุ่ม AI
------------------------------------------ */
-body.dark-mode .ai-links-title {
-    color: #CBD5E1;
-}
+.btn-chatgpt { background-color: #10A37F; }
+.btn-gemini { background: linear-gradient(90deg, #1A73E8, #8AB4F8); }
+.btn-claude { background-color: #D97757; }
+body.dark-mode .ai-links-title { color: #CBD5E1; }
 
 /* =========================================
-   GEMS PAGE (หน้าคลัง GEM)
+   GEMS PAGE & GEM LIST (ระบบคลังรางวัล)
 ========================================= */
 #gems-page {
     animation: fadeInUp 0.4s ease-out forwards;
@@ -470,28 +402,23 @@ body.dark-mode .ai-links-title {
     margin-bottom: 24px;
 }
 
-.gem-info-card p {
-    color: #64748B;
-    line-height: 1.6;
-}
+.gem-info-card p { color: #64748B; line-height: 1.6; }
 
-/* 🔥 🔥 การจัดรูปแบบ GEM LIST (เลียนแบบในภาพ) 🔥 🔥 */
 .gem-list-container {
-    max-width: 600px; /* จำกัดความกว้างให้เหมือนในภาพ */
-    margin: 0 auto;   /* จัดกึ่งกลาง */
+    max-width: 600px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 12px; /* เว้นระยะห่างแต่ละรายการ */
+    gap: 12px;
 }
 
-/* แต่ละรายการ Gem */
 .gem-list-item {
     background-color: #FFFFFF;
     border: 1px solid #E2E8F0;
     border-radius: 12px;
     padding: 16px 24px;
     display: flex;
-    justify-content: space-between; /* จัดซ้ายสุด-ขวาสุด */
+    justify-content: space-between;
     align-items: center;
     transition: transform 0.2s, box-shadow 0.2s;
     cursor: pointer;
@@ -502,139 +429,72 @@ body.dark-mode .ai-links-title {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-.gem-info {
-    display: flex;
-    align-items: center;
-    gap: 16px; /* เว้นระยะไอคอนกับข้อความ */
-}
+.gem-info { display: flex; align-items: center; gap: 16px; }
+.gem-text-group { display: flex; flex-direction: column; gap: 4px; }
+.gem-name { font-weight: 700; color: #1E3A8A; font-size: 1.1rem; }
+.gem-symbol { font-weight: 600; color: #64748B; font-size: 0.9rem; }
+.gem-level { font-weight: 700; color: #16A34A; font-size: 1.2rem; }
 
-.gem-icon {
-    width: 48px;  /* ขนาดไอคอน */
-    height: 48px;
-    border-radius: 50%;
-}
-
-.gem-text-group {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-/* ชื่อ Gem (เลียนแบบ GALA, SOL) */
-.gem-name {
-    font-weight: 700;
-    color: #1E3A8A;
-    font-size: 1.1rem;
-}
-
-/* สัญลักษณ์ Gem (เลียนแบบ $ETH) */
-.gem-symbol {
-    font-weight: 600;
-    color: #64748B;
-    font-size: 0.9rem;
-}
-
-/* เลเวล/สถานะ (เลียนแบบตัวเลขในภาพ) */
-.gem-level {
-    font-weight: 700;
-    color: #16A34A; /* สีเขียวเหมือนในภาพ */
-    font-size: 1.2rem;
-}
-
-/* -----------------------------------------
-   รองรับโหมดมืด (Dark Mode) สำหรับหน้า GEM
------------------------------------------ */
 body.dark-mode #gems-page .gem-info-card,
-body.dark-mode #gems-page .gem-list-item {
-    background-color: #1E293B;
-    border-color: #334155;
-}
-
+body.dark-mode #gems-page .gem-list-item { background-color: #1E293B; border-color: #334155; }
 body.dark-mode #gems-page .gem-info-card h2,
-body.dark-mode #gems-page .gem-list-item .gem-name {
-    color: #F8FAFC;
-}
-
+body.dark-mode #gems-page .gem-list-item .gem-name { color: #F8FAFC; }
 body.dark-mode #gems-page .gem-info-card p,
-body.dark-mode #gems-page .gem-list-item .gem-symbol {
-    color: #CBD5E1;
-}
-
-body.dark-mode #gems-page .gem-list-item .gem-level {
-    color: #86EFAC; /* สีเขียวสว่างขึ้นในโหมดมืด */
-}
+body.dark-mode #gems-page .gem-list-item .gem-symbol { color: #CBD5E1; }
+body.dark-mode #gems-page .gem-list-item .gem-level { color: #86EFAC; }
 
 /* =========================================
    ระบบกดหัวใจ (Favorite Button)
 ========================================= */
-/* ต้องแน่ใจว่า .prompt-card มี position: relative; เพื่อให้หัวใจอิงตำแหน่งจากการ์ด */
-.prompt-card {
-    position: relative; 
-}
-
 .btn-favorite {
     position: absolute;
     top: 20px;
     right: 20px;
     background: none;
     border: none;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
+    color: #CBD5E1;
     cursor: pointer;
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     z-index: 10;
     padding: 0;
 }
 
-.btn-favorite:hover {
-    transform: scale(1.2);
-}
+.btn-favorite:hover { transform: scale(1.2); }
+.btn-favorite .favorited { color: #EF4444; }
 
-/* แอนิเมชันตอนกดหัวใจ */
 @keyframes heartBurst {
     0% { transform: scale(1); }
     50% { transform: scale(1.4); }
     100% { transform: scale(1); }
 }
-
-.btn-favorite.active {
-    animation: heartBurst 0.3s ease-out;
-}
+.btn-favorite.active { animation: heartBurst 0.3s ease-out; }
 
 /* =========================================
-   ระบบรูปภาพประกอบ Prompt (Image Preview)
+   ระบบรูปภาพประกอบ และคำอธิบายการ์ด
 ========================================= */
 .prompt-image {
     width: 100%;
-    height: 200px; /* ล็อกความสูงไว้ รูปจะได้ไม่ทำให้การ์ดยาวเกินไป */
-    object-fit: cover; /* ตัดรูปให้พอดีกรอบอัตโนมัติ ไม่ให้รูปเบี้ยว */
+    height: 200px;
+    object-fit: cover;
     border-radius: 8px;
     margin-bottom: 16px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
 }
+.prompt-image:hover { transform: scale(1.02); }
 
-.prompt-image:hover {
-    transform: scale(1.02); /* เอาเมาส์ชี้แล้วรูปขยายขึ้นนิดนึง */
-}
-
-/* =========================================
-   คำอธิบาย Prompt (Prompt Description)
-========================================= */
 .prompt-description {
     font-size: 0.9rem;
-    color: #64748B; /* สีเทาอมฟ้านิดๆ ดูสบายตา */
-    margin-top: -8px; /* ดึงข้อความให้ขยับขึ้นไปชิดหัวข้อ(h3) นิดนึง */
-    margin-bottom: 16px; /* ดันกล่องข้อความ Prompt ลงไปข้างล่าง */
+    color: #64748B;
+    margin-top: -8px;
+    margin-bottom: 16px;
     line-height: 1.5;
 }
-
-/* รองรับโหมดมืด (Dark Mode) */
-body.dark-mode .prompt-description {
-    color: #94A3B8;
-}
+body.dark-mode .prompt-description { color: #94A3B8; }
 
 /* =========================================
-   ระบบ Dropdown เมนู (หมวดหมู่)
+   ระบบ Dropdown เมนูหมวดหมู่บน Header
 ========================================= */
 .dropdown {
     display: inline-block;
@@ -654,13 +514,10 @@ body.dark-mode .prompt-description {
     padding-bottom: 5px;
 }
 
-.dropdown:hover .dropbtn {
-    color: #9333EA; /* เปลี่ยนสีตอนเอาเมาส์ชี้ */
-}
+.dropdown:hover .dropbtn { color: #9333EA; }
 
-/* กล่องเนื้อหาที่ซ่อนอยู่ */
 .dropdown-content {
-    display: none; /* ซ่อนไว้ก่อน */
+    display: none;
     position: absolute;
     background-color: #FFFFFF;
     min-width: 220px;
@@ -674,13 +531,12 @@ body.dark-mode .prompt-description {
     animation: fadeInUp 0.2s ease-out forwards;
 }
 
-/* สไตล์ของลิงก์แต่ละอันใน Dropdown */
 .dropdown-content a.btn-filter {
     color: #475569;
     padding: 12px 20px;
     text-decoration: none;
     display: block;
-    margin-left: 0; /* ล้างค่า margin ของเมนูเดิม */
+    margin-left: 0;
     font-weight: 500;
     transition: all 0.2s;
     border: none;
@@ -693,43 +549,199 @@ body.dark-mode .prompt-description {
 .dropdown-content a.btn-filter:hover {
     background-color: #F8FAFC;
     color: #9333EA;
-    padding-left: 24px; /* เอฟเฟกต์เลื่อนไปขวานิดนึงตอนชี้ */
+    padding-left: 24px;
 }
 
-/* ตอนที่กดเลือกหมวดหมู่นั้นๆ อยู่ */
 .dropdown-content a.btn-filter.active {
     background-color: #F3E8FF;
     color: #9333EA;
     font-weight: 700;
-    border-left: 4px solid #9333EA; /* เพิ่มแถบสีด้านซ้าย */
+    border-left: 4px solid #9333EA;
 }
 
-/* โชว์กล่องเมื่อเอาเมาส์ชี้ที่ .dropdown */
-.dropdown:hover .dropdown-content {
-    display: block;
-}
+.dropdown:hover .dropdown-content { display: block; }
 
-/* -----------------------------------------
-   รองรับโหมดมืด (Dark Mode)
------------------------------------------ */
 body.dark-mode .dropbtn { color: #CBD5E1; }
 body.dark-mode .dropdown:hover .dropbtn { color: #A855F7; }
-
-body.dark-mode .dropdown-content {
-    background-color: #1E293B;
-    border-color: #334155;
-    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.5);
-}
-
+body.dark-mode .dropdown-content { background-color: #1E293B; border-color: #334155; box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.5); }
 body.dark-mode .dropdown-content a.btn-filter { color: #CBD5E1; }
+body.dark-mode .dropdown-content a.btn-filter:hover { background-color: #334155; color: #A855F7; }
+body.dark-mode .dropdown-content a.btn-filter.active { background-color: #334155; color: #A855F7; border-left: 4px solid #A855F7; }
 
-body.dark-mode .dropdown-content a.btn-filter:hover {
-    background-color: #334155;
-    color: #A855F7;
+/* =========================================
+   การปรับแต่งไอคอนเวกเตอร์ (General Icon Global)
+========================================= */
+.logo i,
+.nav-links a i,
+.dropbtn i,
+.dropdown-content a i,
+.ai-link i,
+.btn-copy i {
+    margin-right: 8px;
+    transition: all 0.2s;
 }
 
-body.dark-mode .dropdown-content a.btn-filter.active {
-    background-color: #334155;
-    color: #A855F7;
-    border-left: 4px solid #A855F7;
+.logo i { font-size: 1.1rem; }
+.dropdown-arrow { margin-right: 0 !important; margin-left: 6px; font-size: 0.75rem; }
+.ai-link i { font-size: 1.1rem; }
+
+/* =========================================
+   💎 ตกแต่งไอคอน SVG ในระบบหน้า Gem Tiers
+========================================= */
+.gem-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-size: 0;
+    color: transparent;
+}
+
+.gem-svg-icon {
+    width: 24px;
+    height: 24px;
+    transition: all 0.2s ease;
+}
+
+.blue-gem { background-color: rgba(59, 130, 246, 0.1); color: #1E3A8A; }
+.purple-gem { background-color: rgba(168, 85, 247, 0.1); color: #7E22CE; }
+.pink-gem { background-color: rgba(236, 72, 153, 0.1); color: #DB2777; } /* เพิ่มสไตล์สีของมงกุฎ (Tier 3) */
+
+body.dark-mode .blue-gem { background-color: rgba(59, 130, 246, 0.2); color: #8AB4F8; }
+body.dark-mode .purple-gem { background-color: rgba(168, 85, 247, 0.2); color: #D8B4FE; }
+body.dark-mode .pink-gem { background-color: rgba(236, 72, 153, 0.2); color: #F472B6; } /* เพิ่มสไตล์โหมดมืดมงกุฎ */
+
+.gem-list-item:hover .gem-svg-icon { transform: scale(1.15) rotate(5deg); }
+
+/* 🛡️ ป้องกันไม่ให้รูปภาพขนาดเดิม (ถ้าใช้แท็ก img) ทะลุจออีก */
+.gem-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* =========================================
+   ระบบ Login & Modal (หน้าต่างป๊อปอัป)
+========================================= */
+.btn-login {
+    background-color: #9333EA;
+    color: #FFFFFF !important;
+    padding: 8px 16px;
+    border-radius: 99px;
+    margin-left: 24px;
+}
+.btn-login:hover { background-color: #7E22CE; transform: translateY(-2px); }
+
+.user-profile {
+    margin-left: 24px;
+    color: #1E3A8A;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.btn-logout { color: #EF4444 !important; margin-left: 8px; cursor: pointer; }
+.btn-logout:hover { color: #DC2626 !important; transform: scale(1.1); }
+
+/* พื้นหลัง Modal (เบลอๆ) */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+.modal-overlay.show { display: flex; animation: fadeIn 0.3s; }
+
+/* กล่องล็อกอิน */
+.modal-content {
+    background: #FFFFFF;
+    padding: 40px;
+    border-radius: 24px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    transform: translateY(20px);
+    animation: slideUpModal 0.3s forwards;
+}
+
+.modal-content h2 { margin: 0 0 10px 0; color: #1E3A8A; }
+.modal-content p { color: #64748B; font-size: 0.9rem; margin-bottom: 24px; }
+
+#usernameInput {
+    width: 100%; padding: 16px; margin-bottom: 24px;
+    border: 2px solid #E2E8F0; border-radius: 12px;
+    font-size: 1rem; outline: none; box-sizing: border-box;
+    text-align: center; font-weight: 600;
+}
+#usernameInput:focus { border-color: #9333EA; box-shadow: 0 0 0 4px rgba(147, 51, 234, 0.1); }
+
+.modal-actions { display: flex; gap: 12px; }
+.btn-cancel, .btn-confirm {
+    flex: 1; padding: 14px; border-radius: 12px; border: none;
+    font-weight: 700; cursor: pointer; transition: all 0.2s; font-size: 1rem;
+}
+.btn-cancel { background: #F1F5F9; color: #475569; }
+.btn-cancel:hover { background: #E2E8F0; }
+.btn-confirm { background: #9333EA; color: #FFFFFF; }
+.btn-confirm:hover { background: #7E22CE; }
+
+/* Dark Mode สำหรับ Modal */
+body.dark-mode .modal-content { background: #1E293B; }
+body.dark-mode .modal-content h2, body.dark-mode .user-profile { color: #F8FAFC; }
+body.dark-mode #usernameInput { background: #0F172A; border-color: #334155; color: #FFFFFF; }
+body.dark-mode .btn-cancel { background: #334155; color: #CBD5E1; }
+
+@keyframes slideUpModal { to { transform: translateY(0); } }
+
+/* ===================================================
+   📱 RESPONSIVE DESIGN (กฎเหล็ก: บังคับให้อยู่ล่างสุดเพื่อคุมมือถือ)
+=================================================== */
+@media (max-width: 768px) {
+    /* ปรับ Header เรียงแนวตั้งกึ่งกลาง */
+    .header-container {
+        flex-direction: column;
+        justify-content: center;
+        gap: 16px;
+        padding: 16px 12px;
+    }
+
+    /* จัดระเบียบชุดเมนูด้านบน */
+    .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        gap: 12px;
+    }
+
+    /* ล้างค่า margin เพื่อให้ปุ่มสมมาตร */
+    .nav-links a, 
+    .dropdown {
+        margin-left: 0; 
+        font-size: 0.95rem;
+    }
+
+    /* ตรึงตำแหน่งปุ่มสลับไฟไม่ให้ตกบรรทัด */
+    .btn-theme {
+        margin-left: 0;
+        padding: 4px 8px;
+    }
+
+    /* จัดกล่องดรอปดาวน์ให้อยู่กลางจอ ไม่ตกขอบขวา */
+    .dropdown-content {
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90vw;
+        max-width: 300px;
+    }
 }

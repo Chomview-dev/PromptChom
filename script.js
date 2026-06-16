@@ -10,33 +10,27 @@ function showToast() {
 }
 
 // ==========================================
-// ส่วนที่ 2: ระบบคัดลอกข้อความ + เปลี่ยนไอคอนปุ่ม
+// ส่วนที่ 2: ระบบคัดลอกข้อความ + เปลี่ยนไอคอนปุ่ม (✅ อัปเดตไอคอน FontAwesome)
 // ==========================================
 function copyPrompt(elementId, buttonElement) {
     const textToCopy = document.getElementById(elementId).innerText;
     
-    // ก๊อปปี้ลงคลิปบอร์ด
     navigator.clipboard.writeText(textToCopy).then(function() {
-        // 1. โชว์ Toast แจ้งเตือนมุมจอ
         showToast();
         
-        // 2. ดึง element ของไอคอนและข้อความในปุ่มนั้นมา
         const icon = buttonElement.querySelector('.icon');
         const text = buttonElement.querySelector('.text');
         
-        // จำค่าเดิมไว้ก่อน
-        const originalIcon = icon.innerText;
+        const originalIconHTML = icon.innerHTML;
         const originalText = text.innerText;
         
-        // 3. เปลี่ยนสีปุ่ม เปลี่ยนไอคอน และข้อความ
         buttonElement.classList.add('copied');
-        icon.innerText = "✅";
+        icon.innerHTML = '<i class="fas fa-check"></i>'; // ไอคอนติ๊กถูก
         text.innerText = "คัดลอกแล้ว";
         
-        // 4. ตั้งเวลา 2 วินาทีให้กลับมาเป็นสภาพเดิม
         setTimeout(function() {
             buttonElement.classList.remove('copied');
-            icon.innerText = originalIcon;
+            icon.innerHTML = originalIconHTML;
             text.innerText = originalText;
         }, 2000);
 
@@ -55,17 +49,15 @@ function filterCategory(category, button) {
     button.classList.add('active');
 
     const cards = document.querySelectorAll('.prompt-card');
-    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]'); // ดึงข้อมูลหัวใจ
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
 
     cards.forEach(card => {
         const cardCategory = card.getAttribute('data-category');
         const cardId = card.getAttribute('data-id');
 
-        // เงื่อนไขการโชว์การ์ด
         if (category === 'all') {
             card.style.display = 'block';
         } else if (category === 'favorites') {
-            // โชว์เฉพาะอันที่ id อยู่ในรายการโปรด
             card.style.display = favorites.includes(cardId) ? 'block' : 'none';
         } else {
             card.style.display = cardCategory === category ? 'block' : 'none';
@@ -76,7 +68,7 @@ function filterCategory(category, button) {
 }
 
 // ==========================================
-// ส่วนที่ 4: ระบบฐานข้อมูล (Fetch Data JSON)
+// ส่วนที่ 4: ระบบฐานข้อมูล (Fetch Data JSON) (✅ อัปเดตไอคอนหัวใจและคัดลอก)
 // ==========================================
 async function loadPrompts() {
     try {
@@ -89,17 +81,19 @@ async function loadPrompts() {
 
         promptsData.forEach(item => {
             const isFavorited = favorites.includes(item.id);
-            const heartIcon = isFavorited ? '❤️' : '🤍';
+            // เลือกไอคอนหัวใจ (ทึบ หรือ โปร่ง)
+            const heartIconClass = isFavorited ? 'fas fa-heart favorited' : 'far fa-heart';
             const activeClass = isFavorited ? 'active' : '';
 
-            // 🔥 เช็คว่าข้อมูลมีรูปภาพไหม ถ้ามีให้สร้างแท็ก <img> ถ้าไม่มีให้ว่างไว้
             const imageHTML = item.imageUrl 
                 ? `<img src="${item.imageUrl}" alt="${item.title}" class="prompt-image">` 
                 : '';
 
             const cardHTML = `
                 <div class="prompt-card" data-category="${item.categoryId}" data-id="${item.id}">
-                    <button class="btn-favorite ${activeClass}" onclick="toggleFavorite('${item.id}', this)">${heartIcon}</button>
+                    <button class="btn-favorite ${activeClass}" onclick="toggleFavorite('${item.id}', this)">
+                        <i class="${heartIconClass}"></i>
+                    </button>
                     
                     ${imageHTML}
                     
@@ -113,7 +107,7 @@ async function loadPrompts() {
                     </div>
                     
                     <button onclick="copyPrompt('${item.id}-text', this)" class="btn-copy">
-                        <span class="icon">📋</span> <span class="text">คัดลอกคำสั่ง</span>
+                        <span class="icon"><i class="fas fa-paste"></i></span> <span class="text">คัดลอกคำสั่ง</span>
                     </button>
                 </div>
             `;
@@ -130,14 +124,12 @@ async function loadPrompts() {
 function searchPrompts() {
     const searchQuery = document.getElementById('searchInput').value.toLowerCase();
     const cards = document.querySelectorAll('.prompt-card');
-    let hasVisibleCard = false;
     
     cards.forEach(card => {
         const title = card.querySelector('h3').innerText.toLowerCase();
         const content = card.querySelector('.prompt-box').innerText.toLowerCase();
         if (title.includes(searchQuery) || content.includes(searchQuery)) {
             card.style.display = 'block';
-            hasVisibleCard = true;
         } else {
             card.style.display = 'none';
         }
@@ -145,7 +137,7 @@ function searchPrompts() {
 }
 
 // ==========================================
-// ส่วนที่ 6: ระบบสลับโหมดมืด (Dark Mode)
+// ส่วนที่ 6: ระบบสลับโหมดมืด (Dark Mode) (✅ อัปเดตไอคอนพระอาทิตย์/พระจันทร์)
 // ==========================================
 function initTheme() {
     const themeToggleBtn = document.getElementById('themeToggle');
@@ -153,14 +145,18 @@ function initTheme() {
     
     if (localStorage.getItem('theme') === 'dark') {
         body.classList.add('dark-mode');
-        themeToggleBtn.innerText = '☀️';
     }
+    
+    // ตั้งค่าไอคอนเริ่มต้น
+    themeToggleBtn.innerHTML = body.classList.contains('dark-mode') ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     
     themeToggleBtn.addEventListener('click', () => {
         body.classList.toggle('dark-mode');
         const isDark = body.classList.contains('dark-mode');
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        themeToggleBtn.innerText = isDark ? '☀️' : '🌙';
+        
+        // สลับไอคอนเมื่อกดคลิก
+        themeToggleBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     });
 }
 
@@ -182,60 +178,124 @@ function initBackToTop() {
     });
 }
 
+// =========================================
+// ส่วนที่ 8: ระบบสลับหน้า GEMS/Prompt (Navigation)
+// =========================================
+gemsLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // 🔥 ตรวจสอบการล็อกอินก่อนเข้าหน้า Gem
+            const username = localStorage.getItem('promptchom_user');
+            if(!username) {
+                openLoginModal(); // ถ้ายังไม่ล็อกอิน ให้เปิดหน้าต่างล็อกอิน
+                return; // สั่งหยุด ไม่ให้เปิดหน้า Gem
+            }
+            
+            // ถ้าล็อกอินแล้ว ให้เปิดหน้า Gem ได้
+            promptContainer.style.display = 'none'; 
+            gemsPage.style.display = 'block'; 
+            updateGemDisplay(); // อัปเดตตัวเลข Gem ให้เป็นปัจจุบัน
+        });
+
+// ==========================================
+// ส่วนที่ 9: ระบบกดหัวใจรายการโปรด (Favorites) (✅ อัปเดตไอคอนหัวใจตอนกดสลับ)
+// ==========================================
+function toggleFavorite(promptId, btnElement) {
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    const index = favorites.indexOf(promptId);
+
+    if (index === -1) {
+        favorites.push(promptId);
+        btnElement.classList.add('active');
+        btnElement.innerHTML = '<i class="fas fa-heart favorited"></i>'; // เปลี่ยนเป็นหัวใจทึบ
+    } else {
+        favorites.splice(index, 1);
+        btnElement.classList.remove('active');
+        btnElement.innerHTML = '<i class="far fa-heart"></i>'; // เปลี่ยนเป็นหัวใจโปร่ง
+    }
+
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+}
+
+// =========================================
+// ส่วนที่ 10: ระบบจำลองการล็อกอิน (Auth System)
+// =========================================
+function initAuth() {
+    checkLoginStatus();
+}
+
+// เช็คว่าเคยล็อกอินไว้ไหม
+function checkLoginStatus() {
+    const username = localStorage.getItem('promptchom_user');
+    const loginBtn = document.getElementById('loginBtn');
+    const userProfile = document.getElementById('userProfile');
+    const displayUsername = document.getElementById('displayUsername');
+
+    if (username) {
+        // ถ้าล็อกอินแล้ว ซ่อนปุ่มโชว์โปรไฟล์
+        if(loginBtn) loginBtn.style.display = 'none';
+        if(userProfile) {
+            userProfile.style.display = 'inline-flex';
+            displayUsername.innerText = username;
+        }
+    } else {
+        // ถ้ายัง ซ่อนโปรไฟล์โชว์ปุ่มล็อกอิน
+        if(loginBtn) loginBtn.style.display = 'inline-flex';
+        if(userProfile) userProfile.style.display = 'none';
+    }
+}
+
+function openLoginModal() {
+    document.getElementById('loginModal').classList.add('show');
+    document.getElementById('usernameInput').focus();
+}
+
+function closeLoginModal() {
+    document.getElementById('loginModal').classList.remove('show');
+}
+
+// กดปุ่มเข้าสู่ระบบ
+function loginUser() {
+    const username = document.getElementById('usernameInput').value.trim();
+    if (username.length > 0) {
+        localStorage.setItem('promptchom_user', username);
+        
+        // แจก Gem ให้ 50 หากล็อกอินครั้งแรก
+        if(!localStorage.getItem('user_gems')) {
+            localStorage.setItem('user_gems', '50');
+        }
+        
+        closeLoginModal();
+        checkLoginStatus();
+        updateGemDisplay();
+        
+        // เด้งไปหน้า Gem ทันทีที่ล็อกอินเสร็จ
+        document.getElementById('gemsLink').click();
+    } else {
+        alert('กรุณาตั้งชื่อของคุณด้วยครับ!');
+    }
+}
+
+// กดปุ่มออกจากระบบ
+function logoutUser() {
+    if(confirm('ต้องการออกจากระบบใช่หรือไม่?')) {
+        localStorage.removeItem('promptchom_user');
+        checkLoginStatus();
+        document.getElementById('homeLink').click(); // เด้งกลับหน้าแรก
+    }
+}
+
+// อัปเดตตัวเลข Gem ในหน้า Gems Page
+function updateGemDisplay() {
+    const gemDisplay = document.getElementById('gemCountDisplay');
+    const userGems = localStorage.getItem('user_gems') || '0';
+    if(gemDisplay) {
+        gemDisplay.innerHTML = `<i class="fas fa-gem" style="color: #60A5FA; font-size: 1.2rem;"></i> Gem ของฉัน: ${userGems}`;
+    }
+}
 
 // สตาร์ทระบบทั้งหมดทันทีที่โหลดไฟล์
 loadPrompts();
 initTheme();
 initBackToTop();
-
-// =========================================
-// ส่วนที่ 8: ระบบสลับหน้า GEMS/Prompt (Navigation)
-// =========================================
-function initNavigation() {
-    const homeLink = document.getElementById('homeLink');
-    const gemsLink = document.getElementById('gemsLink');
-    
-    const promptContainer = document.getElementById('prompt-container');
-    const gemsPage = document.getElementById('gems-page');
-
-    // 1. กดเมนู หน้าแรก
-    homeLink.addEventListener('click', (e) => {
-        e.preventDefault(); // ป้องกันลิงก์โหลดหน้าใหม่
-        promptContainer.style.display = 'grid'; // โชว์ Prompt
-        gemsPage.style.display = 'none'; // ซ่อน Gems
-    });
-
-    // 2. กดเมนู Gems
-    gemsLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        promptContainer.style.display = 'none'; // ซ่อน Prompt
-        gemsPage.style.display = 'block'; // โชว์ Gems
-    });
-}
-
-// 🔥 สตาร์ทระบบ Nav ทันทีที่โหลดไฟล์ 🔥
 initNavigation();
-
-// ==========================================
-// ส่วนที่ 9: ระบบกดหัวใจรายการโปรด (Favorites)
-// ==========================================
-function toggleFavorite(promptId, btnElement) {
-    // 1. ดึงข้อมูลหัวใจเดิมจาก LocalStorage (ถ้าไม่มีให้เป็น Array ว่าง)
-    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    const index = favorites.indexOf(promptId);
-
-    if (index === -1) {
-        // ถ้ายังไม่มีในรายการโปรด -> ให้เพิ่มเข้าไป
-        favorites.push(promptId);
-        btnElement.classList.add('active');
-        btnElement.innerText = '❤️'; // เปลี่ยนเป็นหัวใจสีแดง
-    } else {
-        // ถ้ามีอยู่แล้ว (กดซ้ำ) -> ให้เอาออก
-        favorites.splice(index, 1);
-        btnElement.classList.remove('active');
-        btnElement.innerText = '🤍'; // กลับเป็นหัวใจสีขาว
-    }
-
-    // 2. เซฟกลับลงไปในเครื่อง
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-}

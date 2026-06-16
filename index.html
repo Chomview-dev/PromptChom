@@ -5,33 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Prompt Directory</title>
     <link rel="stylesheet" href="style.css?v=999">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
 </head>
 <body>
 
     <header class="site-header">
         <div class="header-container">
-            <a href="#" class="logo">✨ PromptChom</a>
+            <a href="#" class="logo">
+                <i class="fas fa-sparkles" style="color: #A855F7;"></i> PromptChom
+            </a>
+            
             <nav class="nav-links">
                 <a href="#" id="homeLink">หน้าแรก</a>
-                <a href="#" id="gemsLink">💎 ระบบ Gem</a>
+                
+                <a href="#" id="gemsLink"><i class="fas fa-gem"></i> ระบบ Gem</a>
                 
                 <div class="dropdown">
-                    <a href="#" class="dropbtn">หมวดหมู่ <span style="font-size: 0.7em;">▼</span></a>
+                    <a href="#" class="dropbtn">หมวดหมู่ <i class="fas fa-chevron-down dropdown-arrow"></i></a>
                     <div class="dropdown-content">
-                        <a href="#" class="btn-filter active" onclick="filterCategory('all', this); return false;">ทั้งหมด</a>
-                        <a href="#" class="btn-filter" onclick="filterCategory('favorites', this); return false;">❤️ รายการโปรด</a>
-                        <a href="#" class="btn-filter" onclick="filterCategory('image-gen', this); return false;">🎨 สร้างภาพ AI</a>
-                        <a href="#" class="btn-filter" onclick="filterCategory('marketing', this); return false;">📈 การตลาด</a>
-                        <a href="#" class="btn-filter" onclick="filterCategory('education', this); return false;">🎓 การเรียน</a>
-                        <a href="#" class="btn-filter" onclick="filterCategory('coding', this); return false;">💻 การเขียนโค้ด</a>
-                        <a href="#" class="btn-filter" onclick="filterCategory('creative', this); return false;">✍️ งานสร้างสรรค์</a>
-                        <a href="#" class="btn-filter" onclick="filterCategory('productivity', this); return false;">💼 การทำงาน</a>
+                        <a href="#" class="btn-filter active" onclick="filterCategory('all', this); return false;"><i class="fas fa-grid-2"></i> ทั้งหมด</a>
+                        <a href="#" class="btn-filter" onclick="filterCategory('favorites', this); return false;"><i class="fas fa-heart" style="color: #EF4444;"></i> รายการโปรด</a>
+                        <a href="#" class="btn-filter" onclick="filterCategory('image-gen', this); return false;"><i class="fas fa-palette"></i> สร้างภาพ AI</a>
+                        <a href="#" class="btn-filter" onclick="filterCategory('marketing', this); return false;"><i class="fas fa-chart-line"></i> การตลาด</a>
+                        <a href="#" class="btn-filter" onclick="filterCategory('education', this); return false;"><i class="fas fa-graduation-cap"></i> การเรียน</a>
+                        <a href="#" class="btn-filter" onclick="filterCategory('coding', this); return false;"><i class="fas fa-code"></i> การเขียนโค้ด</a>
+                        <a href="#" class="btn-filter" onclick="filterCategory('creative', this); return false;"><i class="fas fa-pen-nib"></i> งานสร้างสรรค์</a>
+                        <a href="#" class="btn-filter" onclick="filterCategory('productivity', this); return false;"><i class="fas fa-briefcase"></i> การทำงาน</a>
                     </div>
                 </div>
                 
                 <a href="#">ติดต่อเรา</a>
-                <button id="themeToggle" class="btn-theme">🌙</button>
+                
+                <a href="#" id="loginBtn" class="btn-login" onclick="openLoginModal(); return false;">
+                    <i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ
+                </a>
+                
+                <span id="userProfile" class="user-profile" style="display: none;">
+                    <i class="fas fa-user-circle"></i> <span id="displayUsername">User</span>
+                    <a href="#" onclick="logoutUser(); return false;" class="btn-logout" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i></a>
+                </span>
+
+                <button id="themeToggle" class="btn-theme"></button>
+
+                
             </nav>
         </div>
     </header>
@@ -50,13 +67,13 @@
         <div class="ai-links-container">
             <span class="ai-links-title">🚀 เปิดใช้งาน AI ด่วน:</span>
             <a href="https://chatgpt.com/" target="_blank" class="ai-link btn-chatgpt">
-                <span class="icon">💬</span> ChatGPT
+                <i class="fas fa-robot"></i> ChatGPT
             </a>
             <a href="https://gemini.google.com/" target="_blank" class="ai-link btn-gemini">
-                <span class="icon">✨</span> Gemini
+                <i class="fas fa-magic"></i> Gemini
             </a>
             <a href="https://claude.ai/" target="_blank" class="ai-link btn-claude">
-                <span class="icon">🧠</span> Claude
+                <i class="fas fa-brain"></i> Claude
             </a>
         </div>
 
@@ -68,7 +85,9 @@
             </div>
 
             <div class="category-container gems-status-container">
-                <button class="btn-filter active">💎 Gem ของฉัน: 150</button>
+                <div id="gemCountDisplay" class="btn-filter active" style="cursor: default; display: inline-flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-gem" style="color: #60A5FA; font-size: 1.2rem;"></i> Gem ของฉัน: 0
+                </div>
             </div>
 
             <div class="search-container gem-info-card">
@@ -89,7 +108,11 @@
             <div class="gem-list-container">
                 <div class="gem-list-item tier-sapphire">
                     <div class="gem-info">
-                        <img src="https://cdn-icons-png.flaticon.com/512/10002/10002446.png" alt="Icon 1" class="gem-icon">
+                        <div class="gem-icon-wrapper blue-gem">
+                            <svg viewBox="0 0 512 512" class="gem-svg-icon" fill="currentColor">
+                                <path d="M256,0L32,192h144L64,320h160L96,512l192-224H144L288,160H112L256,0z"/>
+                            </svg>
+                        </div>
                         <div class="gem-text-group">
                             <span class="gem-name">Gem Genesis</span>
                             <span class="gem-symbol">เริ่มต้นสะสม</span>
@@ -100,7 +123,11 @@
 
                 <div class="gem-list-item tier-amethyst">
                     <div class="gem-info">
-                        <img src="https://cdn-icons-png.flaticon.com/512/10002/10002361.png" alt="Icon 2" class="gem-icon">
+                        <div class="gem-icon-wrapper purple-gem">
+                            <svg viewBox="0 0 512 512" class="gem-svg-icon" fill="currentColor">
+                                <path d="M256,0L0,256l256,256l256-256L256,0z M256,64.3l191.7,191.7L256,447.7L64.3,256L256,64.3z"/>
+                            </svg>
+                        </div>
                         <div class="gem-text-group">
                             <span class="gem-name">Prompt Sapphire</span>
                             <span class="gem-symbol">ผู้ใช้ระดับสูง</span>
@@ -111,7 +138,9 @@
 
                 <div class="gem-list-item tier-diamond">
                     <div class="gem-info">
-                        <img src="https://cdn-icons-png.flaticon.com/512/10002/10002425.png" alt="Icon 3" class="gem-icon">
+                        <div class="gem-icon-wrapper pink-gem">
+                            <i class="fas fa-crown" style="font-size: 1.2rem;"></i>
+                        </div>
                         <div class="gem-text-group">
                             <span class="gem-name">AI Amethyst</span>
                             <span class="gem-symbol">คลังคัดสรรพิเศษ</span>
@@ -121,19 +150,31 @@
                 </div>
             </div>
         </section>
-        </div>
 
         <div class="prompt-grid" id="prompt-container">
             </div>
 
     </main>
 
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-content">
+            <i class="fas fa-gem" style="font-size: 3rem; color: #9333EA; margin-bottom: 16px;"></i>
+            <h2>เข้าสู่ระบบ PromptChom</h2>
+            <p>กรุณาตั้งชื่อผู้ใช้งานเพื่อเริ่มสะสมและใช้งาน Gem 💎</p>
+            <input type="text" id="usernameInput" placeholder="พิมพ์ชื่อของคุณที่นี่..." autocomplete="off">
+            <div class="modal-actions">
+                <button onclick="closeLoginModal()" class="btn-cancel">ยกเลิก</button>
+                <button onclick="loginUser()" class="btn-confirm">เริ่มต้นใช้งาน</button>
+            </div>
+        </div>
+    </div>
+
     <footer class="site-footer">
         <p>&copy; 2026 AI Prompt Directory. ออกแบบและพัฒนาด้วยความตั้งใจ</p>
     </footer>
 
-    <div id="toast" class="toast">✅ คัดลอกคำสั่งสำเร็จ!</div>
-    <button id="backToTop" class="btn-back-to-top">⬆️</button>
+    <div id="toast" class="toast"><i class="fas fa-check-circle" style="margin-right: 8px;"></i>คัดลอกคำสั่งสำเร็จ!</div>
+    <button id="backToTop" class="btn-back-to-top"><i class="fas fa-arrow-up"></i></button>
     <script src="script.js"></script>
 </body>
 </html>
