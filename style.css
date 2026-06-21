@@ -757,3 +757,33 @@ body.dark-mode .btn-cancel { background: #334155; color: #CBD5E1; }
         max-width: 300px;
     }
 }
+
+/* คลาสสำหรับครอบเนื้อหาที่ยังไม่ได้ปลดล็อก */
+.premium-blur {
+    filter: blur(8px); /* ทำให้เบลอ */
+    pointer-events: none; /* ห้ามคลิกหรือก๊อปปี้ */
+    user-select: none;
+}
+
+/* คอนเทนเนอร์หลักของ Prompt พรีเมียม */
+.prompt-card.premium {
+    position: relative;
+    border: 2px solid #F59E0B; /* ขอบทอง/ส้ม */
+}
+
+/* กล่องปุ่มปลดล็อกที่ทับอยู่ด้านบน */
+.lock-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 10;
+    backdrop-filter: blur(2px);
+}
+
+body.dark-mode .lock-overlay {
+    background: rgba(15, 23, 42, 0.8);
+}
