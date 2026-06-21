@@ -112,13 +112,30 @@ function initAuth() {
         if (user) {
             currentUser = user;
             const doc = await db.collection('users').doc(user.uid).get();
+            
             if (!doc.exists) {
+                // กรณีผู้ใช้ใหม่
                 await db.collection('users').doc(user.uid).set({ gems: 100, favorites: [], unlockedPrompts: [] });
                 updateGemDisplay(100);
             } else {
-                updateGemDisplay(doc.data().gems);
-                currentFavorites = doc.data().favorites || [];
-                unlockedPrompts = doc.data().unlockedPrompts || [];
+                // กรณีผู้ใช้เก่าที่มีข้อมูลอยู่แล้ว
+                const userData = doc.data();
+                updateGemDisplay(userData.gems);
+                currentFavorites = userData.favorites || [];
+                unlockedPrompts = userData.unlockedPrompts || [];
+
+                // ==========================================
+                // 👑 สเตปเสริม: เช็คสิทธิ์และโชว์มงกุฎให้แอดมิน วางตรงนี้ครับ!
+                // ==========================================
+                if (userData.role === 'admin') {
+                    // 1. โชว์แจ้งเตือนให้แอดมินรู้ตัวว่าล็อกอินสำเร็จด้วยสิทธิ์พิเศษ
+                    showToast("ล็อกอินสำเร็จ! ยินดีต้อนรับท่าน Admin 👑");
+                    
+                    // 2. หากในอนาคตคุณมีปุ่มโชว์ชื่อผู้ใช้บนแถบเมนู (Navbar) 
+                    // คุณสามารถสั่งให้เติมมงกุฎต่อท้ายชื่อได้ด้วยโค้ดแบบนี้ครับ:
+                    // document.getElementById('userNameDisplay').innerText = "Admin 👑";
+                }
+                // ==========================================
             }
             document.getElementById('loginBtn').style.display = 'none';
         } else {
@@ -138,3 +155,26 @@ function updateGemDisplay(gems) {
 initAuth();
 initTheme();
 loadPrompts();
+
+// ==========================================
+// ประตูลับสำหรับ Admin (ล็อกอินด้วย Email/Password)
+// ==========================================
+function loginAsAdmin() {
+    const email = prompt("🔒 ประตูลับ Admin\nกรุณากรอก Email:");
+    if (!email) return; // ถ้ายกเลิกให้หยุดทำงาน
+    
+    const password = prompt("🔑 กรุณากรอกรหัสผ่าน:");
+    if (!password) return; // ถ้ายกเลิกให้หยุดทำงาน
+
+    auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            alert("✅ ยินดีต้อนรับท่าน Admin!");
+            closeLoginModal();
+            // เด้งไปหน้า Gem เพื่อดูแต้ม 9999 ทันที
+            document.getElementById('gemsLink').click(); 
+        })
+        .catch((error) => {
+            alert("❌ ล็อกอินล้มเหลว: รหัสผ่านผิด หรืออีเมลไม่ถูกต้อง");
+            console.error(error);
+        });
+}
