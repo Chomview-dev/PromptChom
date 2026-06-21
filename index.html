@@ -158,13 +158,15 @@
 
     <div id="loginModal" class="modal-overlay">
         <div class="modal-content">
-            <i class="fas fa-gem" style="font-size: 3rem; color: #9333EA; margin-bottom: 16px;"></i>
-            <h2>เข้าสู่ระบบ PromptChom</h2>
-            <p>กรุณาตั้งชื่อผู้ใช้งานเพื่อเริ่มสะสมและใช้งาน Gem 💎</p>
-            <input type="text" id="usernameInput" placeholder="พิมพ์ชื่อของคุณที่นี่..." autocomplete="off">
-            <div class="modal-actions">
+            <i class="fab fa-google" style="font-size: 3rem; color: #DB4437; margin-bottom: 16px;"></i>
+            <h2>เข้าสู่ระบบด้วย Google</h2>
+            <p>เชื่อมต่อบัญชีเพื่อสะสม Gem ของคุณไว้ในคลังข้อมูลแบบถาวร 💎</p>
+
+            <div class="modal-actions" style="margin-top: 24px;">
                 <button onclick="closeLoginModal()" class="btn-cancel">ยกเลิก</button>
-                <button onclick="loginUser()" class="btn-confirm">เริ่มต้นใช้งาน</button>
+                <button id="btnConfirmLogin" onclick="loginWithGoogle()" class="btn-confirm" style="background-color: #4285F4; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                    <i class="fab fa-google"></i> ล็อกอินด้วย Google
+                </button>
             </div>
         </div>
     </div>
@@ -175,6 +177,11 @@
 
     <div id="toast" class="toast"><i class="fas fa-check-circle" style="margin-right: 8px;"></i>คัดลอกคำสั่งสำเร็จ!</div>
     <button id="backToTop" class="btn-back-to-top"><i class="fas fa-arrow-up"></i></button>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
     <script src="script.js"></script>
 </body>
 </html>

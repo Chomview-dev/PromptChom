@@ -706,7 +706,6 @@ body.dark-mode .btn-cancel { background: #334155; color: #CBD5E1; }
    📱 RESPONSIVE DESIGN (กฎเหล็ก: บังคับให้อยู่ล่างสุดเพื่อคุมมือถือ)
 =================================================== */
 @media (max-width: 768px) {
-    /* ปรับ Header เรียงแนวตั้งกึ่งกลาง */
     .header-container {
         flex-direction: column;
         justify-content: center;
@@ -714,30 +713,43 @@ body.dark-mode .btn-cancel { background: #334155; color: #CBD5E1; }
         padding: 16px 12px;
     }
 
-    /* จัดระเบียบชุดเมนูด้านบน */
     .nav-links {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         align-items: center;
         width: 100%;
-        gap: 12px;
+        gap: 12px; 
     }
 
-    /* ล้างค่า margin เพื่อให้ปุ่มสมมาตร */
-    .nav-links a, 
+    /* ล้างระยะห่างและลดขนาดฟอนต์เมนูให้พอดีจอมือถือ */
+    .nav-links a:not(.btn-login):not(.btn-logout), 
     .dropdown {
         margin-left: 0; 
-        font-size: 0.95rem;
+        font-size: 0.9rem; 
     }
 
-    /* ตรึงตำแหน่งปุ่มสลับไฟไม่ให้ตกบรรทัด */
+    /* ปรับปุ่มเข้าสู่ระบบให้แยกบรรทัดลงมา กดง่ายๆ */
+    .btn-login {
+        margin-left: 0;
+        margin-top: 8px;
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* ปรับโปรไฟล์ให้อยู่ตรงกลาง */
+    .user-profile {
+        margin-left: 0;
+        margin-top: 8px;
+        width: 100%;
+        justify-content: center;
+    }
+
     .btn-theme {
         margin-left: 0;
         padding: 4px 8px;
     }
 
-    /* จัดกล่องดรอปดาวน์ให้อยู่กลางจอ ไม่ตกขอบขวา */
     .dropdown-content {
         left: 50%;
         transform: translateX(-50%);

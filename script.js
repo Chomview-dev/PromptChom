@@ -10,7 +10,7 @@ function showToast() {
 }
 
 // ==========================================
-// ส่วนที่ 2: ระบบคัดลอกข้อความ + เปลี่ยนไอคอนปุ่ม (✅ อัปเดตไอคอน FontAwesome)
+// ส่วนที่ 2: ระบบคัดลอกข้อความ
 // ==========================================
 function copyPrompt(elementId, buttonElement) {
     const textToCopy = document.getElementById(elementId).innerText;
@@ -25,7 +25,7 @@ function copyPrompt(elementId, buttonElement) {
         const originalText = text.innerText;
         
         buttonElement.classList.add('copied');
-        icon.innerHTML = '<i class="fas fa-check"></i>'; // ไอคอนติ๊กถูก
+        icon.innerHTML = '<i class="fas fa-check"></i>'; 
         text.innerText = "คัดลอกแล้ว";
         
         setTimeout(function() {
@@ -49,7 +49,9 @@ function filterCategory(category, button) {
     button.classList.add('active');
 
     const cards = document.querySelectorAll('.prompt-card');
-    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    
+    // 🔥 เปลี่ยนมาใช้ข้อมูลหัวใจจาก Cloud (currentFavorites)
+    const favorites = typeof currentFavorites !== 'undefined' ? currentFavorites : [];
 
     cards.forEach(card => {
         const cardCategory = card.getAttribute('data-category');
@@ -68,7 +70,7 @@ function filterCategory(category, button) {
 }
 
 // ==========================================
-// ส่วนที่ 4: ระบบฐานข้อมูล (Fetch Data JSON) (✅ อัปเดตไอคอนหัวใจและคัดลอก)
+// ส่วนที่ 4: ระบบฐานข้อมูล (Fetch Data JSON)
 // ==========================================
 async function loadPrompts() {
     try {
@@ -77,11 +79,9 @@ async function loadPrompts() {
         const container = document.getElementById('prompt-container');
         container.innerHTML = ''; 
 
-        const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-
         promptsData.forEach(item => {
-            const isFavorited = favorites.includes(item.id);
-            // เลือกไอคอนหัวใจ (ทึบ หรือ โปร่ง)
+            // 🔥 เช็คว่าโหลดหัวใจมาจาก Cloud หรือยัง
+            const isFavorited = typeof currentFavorites !== 'undefined' && currentFavorites.includes(item.id);
             const heartIconClass = isFavorited ? 'fas fa-heart favorited' : 'far fa-heart';
             const activeClass = isFavorited ? 'active' : '';
 
@@ -113,6 +113,12 @@ async function loadPrompts() {
             `;
             container.innerHTML += cardHTML;
         });
+
+        // เช็คและอัปเดตสีหัวใจอีกครั้งหลังจากวาดการ์ดเสร็จ
+        if (typeof updateAllHeartsUI === "function") {
+            updateAllHeartsUI();
+        }
+
     } catch (error) {
         console.error("เกิดข้อผิดพลาด:", error);
     }
@@ -137,7 +143,7 @@ function searchPrompts() {
 }
 
 // ==========================================
-// ส่วนที่ 6: ระบบสลับโหมดมืด (Dark Mode) (✅ อัปเดตไอคอนพระอาทิตย์/พระจันทร์)
+// ส่วนที่ 6: ระบบสลับโหมดมืด (Dark Mode)
 // ==========================================
 function initTheme() {
     const themeToggleBtn = document.getElementById('themeToggle');
@@ -147,15 +153,12 @@ function initTheme() {
         body.classList.add('dark-mode');
     }
     
-    // ตั้งค่าไอคอนเริ่มต้น
     themeToggleBtn.innerHTML = body.classList.contains('dark-mode') ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     
     themeToggleBtn.addEventListener('click', () => {
         body.classList.toggle('dark-mode');
         const isDark = body.classList.contains('dark-mode');
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        
-        // สลับไอคอนเมื่อกดคลิก
         themeToggleBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     });
 }
@@ -181,121 +184,203 @@ function initBackToTop() {
 // =========================================
 // ส่วนที่ 8: ระบบสลับหน้า GEMS/Prompt (Navigation)
 // =========================================
-gemsLink.addEventListener('click', (e) => {
+function initNavigation() {
+    const homeLink = document.getElementById('homeLink');
+    const gemsLink = document.getElementById('gemsLink');
+    const promptContainer = document.getElementById('prompt-container');
+    const gemsPage = document.getElementById('gems-page');
+
+    if(homeLink && gemsLink && promptContainer && gemsPage) {
+        homeLink.addEventListener('click', (e) => {
             e.preventDefault();
-            
-            // 🔥 ตรวจสอบการล็อกอินก่อนเข้าหน้า Gem
-            const username = localStorage.getItem('promptchom_user');
-            if(!username) {
-                openLoginModal(); // ถ้ายังไม่ล็อกอิน ให้เปิดหน้าต่างล็อกอิน
-                return; // สั่งหยุด ไม่ให้เปิดหน้า Gem
-            }
-            
-            // ถ้าล็อกอินแล้ว ให้เปิดหน้า Gem ได้
-            promptContainer.style.display = 'none'; 
-            gemsPage.style.display = 'block'; 
-            updateGemDisplay(); // อัปเดตตัวเลข Gem ให้เป็นปัจจุบัน
+            promptContainer.style.display = 'grid'; 
+            gemsPage.style.display = 'none'; 
         });
 
+        gemsLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            if(!currentUser) {
+                openLoginModal();
+                return; 
+            }
+            promptContainer.style.display = 'none'; 
+            gemsPage.style.display = 'block'; 
+        });
+    }
+}
+
 // ==========================================
-// ส่วนที่ 9: ระบบกดหัวใจรายการโปรด (Favorites) (✅ อัปเดตไอคอนหัวใจตอนกดสลับ)
+// ส่วนที่ 9: ระบบกดหัวใจลง Cloud (Favorites) 🔥
 // ==========================================
-function toggleFavorite(promptId, btnElement) {
-    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    const index = favorites.indexOf(promptId);
+async function toggleFavorite(promptId, btnElement) {
+    // บังคับล็อกอินก่อนกดหัวใจ
+    if (!currentUser) {
+        openLoginModal();
+        return;
+    }
+
+    const userRef = db.collection('users').doc(currentUser.uid);
+    const index = currentFavorites.indexOf(promptId);
 
     if (index === -1) {
-        favorites.push(promptId);
+        // ยังไม่มี -> เพิ่มเข้า Cloud
+        currentFavorites.push(promptId);
         btnElement.classList.add('active');
-        btnElement.innerHTML = '<i class="fas fa-heart favorited"></i>'; // เปลี่ยนเป็นหัวใจทึบ
+        btnElement.innerHTML = '<i class="fas fa-heart favorited"></i>';
+        
+        await userRef.update({
+            favorites: firebase.firestore.FieldValue.arrayUnion(promptId)
+        });
     } else {
-        favorites.splice(index, 1);
+        // มีแล้ว -> เอาออกจาก Cloud
+        currentFavorites.splice(index, 1);
         btnElement.classList.remove('active');
-        btnElement.innerHTML = '<i class="far fa-heart"></i>'; // เปลี่ยนเป็นหัวใจโปร่ง
+        btnElement.innerHTML = '<i class="far fa-heart"></i>';
+        
+        await userRef.update({
+            favorites: firebase.firestore.FieldValue.arrayRemove(promptId)
+        });
     }
 
-    localStorage.setItem('favorites', JSON.stringify(favorites));
+    // ซ่อนการ์ดทันทีถ้ากดหัวใจออก ขณะอยู่ในหมวดหมู่รายการโปรด
+    const activeFilter = document.querySelector('.btn-filter.active');
+    if (activeFilter && activeFilter.innerText.includes("รายการโปรด")) {
+        filterCategory('favorites', activeFilter);
+    }
 }
 
-// =========================================
-// ส่วนที่ 10: ระบบจำลองการล็อกอิน (Auth System)
-// =========================================
-function initAuth() {
-    checkLoginStatus();
-}
-
-// เช็คว่าเคยล็อกอินไว้ไหม
-function checkLoginStatus() {
-    const username = localStorage.getItem('promptchom_user');
-    const loginBtn = document.getElementById('loginBtn');
-    const userProfile = document.getElementById('userProfile');
-    const displayUsername = document.getElementById('displayUsername');
-
-    if (username) {
-        // ถ้าล็อกอินแล้ว ซ่อนปุ่มโชว์โปรไฟล์
-        if(loginBtn) loginBtn.style.display = 'none';
-        if(userProfile) {
-            userProfile.style.display = 'inline-flex';
-            displayUsername.innerText = username;
+// ฟังก์ชันเสริม: อัปเดตสีหัวใจทุกดวงให้ตรงกับ Cloud
+function updateAllHeartsUI() {
+    const cards = document.querySelectorAll('.prompt-card');
+    cards.forEach(card => {
+        const promptId = card.getAttribute('data-id');
+        const btn = card.querySelector('.btn-favorite');
+        if(btn) {
+            if(currentFavorites.includes(promptId)) {
+                btn.classList.add('active');
+                btn.innerHTML = '<i class="fas fa-heart favorited"></i>';
+            } else {
+                btn.classList.remove('active');
+                btn.innerHTML = '<i class="far fa-heart"></i>';
+            }
         }
-    } else {
-        // ถ้ายัง ซ่อนโปรไฟล์โชว์ปุ่มล็อกอิน
-        if(loginBtn) loginBtn.style.display = 'inline-flex';
-        if(userProfile) userProfile.style.display = 'none';
-    }
+    });
+}
+
+// =========================================
+// ส่วนที่ 10: ระบบ Backend ของจริง (Firebase Auth & Firestore)
+// =========================================
+const firebaseConfig = {
+    apiKey: "AIzaSyCr89ya9M0R2Skk5gmOHir8qCLCB_-RYgo",
+    authDomain: "promptchom-app.firebaseapp.com",
+    projectId: "promptchom-app",
+    storageBucket: "promptchom-app.firebasestorage.app",
+    messagingSenderId: "377624904710",
+    appId: "1:377624904710:web:c43b1ecebd908d3a05ef87"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let currentUser = null; 
+let currentFavorites = []; // 🔥 ตัวแปรเก็บหัวใจของยูสเซอร์คนปัจจุบันบน Cloud
+
+function initAuth() {
+    auth.onAuthStateChanged(async (user) => {
+        const loginBtn = document.getElementById('loginBtn');
+        const userProfile = document.getElementById('userProfile');
+        
+        if (user) {
+            currentUser = user;
+            const userPhoto = user.photoURL || 'fas fa-user-circle';
+            const userName = user.displayName || 'User';
+            
+            if(loginBtn) loginBtn.style.display = 'none';
+            if(userProfile) {
+                userProfile.style.display = 'inline-flex';
+                userProfile.innerHTML = `<img src="${userPhoto}" alt="Profile" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #9333EA; margin-right: 8px;"> <span id="displayUsername">${userName}</span> <a href="#" onclick="logoutUser(); return false;" class="btn-logout" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i></a>`;
+            }
+
+            const userRef = db.collection('users').doc(user.uid);
+            const doc = await userRef.get();
+            
+            if (!doc.exists) {
+                // ผู้ใช้ใหม่: สร้างคลังเก็บหัวใจว่างๆ ไว้ให้
+                await userRef.set({
+                    name: userName,
+                    email: user.email,
+                    gems: 50,
+                    favorites: [], 
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                updateGemDisplay(50);
+                currentFavorites = [];
+            } else {
+                // ผู้ใช้เก่า: ดึงแต้มและดึงหัวใจจาก Cloud ลงมาที่เครื่อง
+                updateGemDisplay(doc.data().gems);
+                currentFavorites = doc.data().favorites || []; 
+            }
+            
+            // สั่งระบายสีหัวใจตามข้อมูลที่ดึงมาจาก Cloud
+            updateAllHeartsUI();
+            
+        } else {
+            currentUser = null;
+            currentFavorites = []; // เคลียร์หัวใจเมื่อล็อกเอาต์ออก
+            
+            if(loginBtn) loginBtn.style.display = 'inline-flex';
+            if(userProfile) userProfile.style.display = 'none';
+            updateGemDisplay(0);
+            
+            updateAllHeartsUI(); // เปลี่ยนหัวใจเป็นโปร่งใสทั้งหมด
+        }
+    });
+}
+
+function loginWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const confirmBtn = document.getElementById('btnConfirmLogin');
+    
+    confirmBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> กำลังเชื่อมต่อบัญชี...';
+    
+    auth.signInWithPopup(provider).then((result) => {
+        closeLoginModal();
+        confirmBtn.innerHTML = '<i class="fab fa-google"></i> ล็อกอินด้วย Google';
+    }).catch((error) => {
+        alert("การล็อกอินขัดข้อง: " + error.message);
+        confirmBtn.innerHTML = '<i class="fab fa-google"></i> ล็อกอินด้วย Google';
+    });
 }
 
 function openLoginModal() {
     document.getElementById('loginModal').classList.add('show');
-    document.getElementById('usernameInput').focus();
 }
 
 function closeLoginModal() {
     document.getElementById('loginModal').classList.remove('show');
 }
 
-// กดปุ่มเข้าสู่ระบบ
-function loginUser() {
-    const username = document.getElementById('usernameInput').value.trim();
-    if (username.length > 0) {
-        localStorage.setItem('promptchom_user', username);
-        
-        // แจก Gem ให้ 50 หากล็อกอินครั้งแรก
-        if(!localStorage.getItem('user_gems')) {
-            localStorage.setItem('user_gems', '50');
-        }
-        
-        closeLoginModal();
-        checkLoginStatus();
-        updateGemDisplay();
-        
-        // เด้งไปหน้า Gem ทันทีที่ล็อกอินเสร็จ
-        document.getElementById('gemsLink').click();
-    } else {
-        alert('กรุณาตั้งชื่อของคุณด้วยครับ!');
-    }
-}
-
-// กดปุ่มออกจากระบบ
 function logoutUser() {
-    if(confirm('ต้องการออกจากระบบใช่หรือไม่?')) {
-        localStorage.removeItem('promptchom_user');
-        checkLoginStatus();
-        document.getElementById('homeLink').click(); // เด้งกลับหน้าแรก
+    if(confirm('คุณต้องการออกจากระบบใช่หรือไม่?')) {
+        auth.signOut().then(() => {
+            document.getElementById('homeLink').click(); 
+        });
     }
 }
 
-// อัปเดตตัวเลข Gem ในหน้า Gems Page
-function updateGemDisplay() {
+function updateGemDisplay(gemsAmount) {
     const gemDisplay = document.getElementById('gemCountDisplay');
-    const userGems = localStorage.getItem('user_gems') || '0';
     if(gemDisplay) {
-        gemDisplay.innerHTML = `<i class="fas fa-gem" style="color: #60A5FA; font-size: 1.2rem;"></i> Gem ของฉัน: ${userGems}`;
+        gemDisplay.innerHTML = `<i class="fas fa-gem" style="color: #60A5FA; font-size: 1.2rem;"></i> Gem ของฉัน: ${gemsAmount}`;
     }
 }
 
+// =========================================
 // สตาร์ทระบบทั้งหมดทันทีที่โหลดไฟล์
+// =========================================
 loadPrompts();
 initTheme();
 initBackToTop();
+initAuth();
 initNavigation();
