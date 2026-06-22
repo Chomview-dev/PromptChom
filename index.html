@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Prompt Directory</title>
-    <link rel="stylesheet" href="style.css?v=999">
+    <link rel="stylesheet" href="style.css?v=1001">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
 </head>
-<body>
+<body class="dark-mode">
 
     <header class="site-header">
         <div class="header-container">
@@ -18,8 +18,8 @@
             
             <nav class="nav-links">
                 <a href="#" id="homeLink">หน้าแรก</a>
-                
-                <a href="#" id="gemsLink"><i class="fas fa-gem"></i> ระบบ Gem</a>
+                <a href="#" id="spinLink"><i class="fas fa-gift" style="color: #F59E0B;"></i> สุ่มรางวัล</a>
+                <a href="#" id="gemsLink"><i class="fas fa-user-circle"></i> โปรไฟล์ของฉัน</a>
                 
                 <div class="dropdown">
                     <a href="#" class="dropbtn">หมวดหมู่ <i class="fas fa-chevron-down dropdown-arrow"></i></a>
@@ -35,7 +35,14 @@
                     </div>
                 </div>
                 
-                <a href="#">ติดต่อเรา</a>
+                <a href="#" id="contactLink">ติดต่อเรา</a>
+                
+                <!-- ปุ่มแคปซูลแสดงสถานะ Gem และเติมเงิน -->
+                <div id="headerGemContainer" class="header-gem-pill" style="display: none;" onclick="openTopupModal()">
+                    <i class="fas fa-gem" style="color: #3B82F6;"></i>
+                    <span id="headerGemCount">0</span>
+                    <div class="plus-btn"><i class="fas fa-plus"></i></div>
+                </div>
                 
                 <a href="#" id="loginBtn" class="btn-login" onclick="openLoginModal(); return false;">
                     <i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ
@@ -47,8 +54,6 @@
                 </span>
 
                 <button id="themeToggle" class="btn-theme"></button>
-
-                
             </nav>
         </div>
     </header>
@@ -66,96 +71,158 @@
         
         <div class="ai-links-container">
             <span class="ai-links-title">🚀 เปิดใช้งาน AI ด่วน:</span>
-            <a href="https://chatgpt.com/" target="_blank" class="ai-link btn-chatgpt">
-                <i class="fas fa-robot"></i> ChatGPT
-            </a>
-            <a href="https://gemini.google.com/" target="_blank" class="ai-link btn-gemini">
-                <i class="fas fa-magic"></i> Gemini
-            </a>
-            <a href="https://claude.ai/" target="_blank" class="ai-link btn-claude">
-                <i class="fas fa-brain"></i> Claude
-            </a>
+            <a href="https://chatgpt.com/" target="_blank" class="ai-link btn-chatgpt"><i class="fas fa-robot"></i> ChatGPT</a>
+            <a href="https://gemini.google.com/" target="_blank" class="ai-link btn-gemini"><i class="fas fa-magic"></i> Gemini</a>
+            <a href="https://claude.ai/" target="_blank" class="ai-link btn-claude"><i class="fas fa-brain"></i> Claude</a>
         </div>
 
+        <!-- ==========================================
+             หน้าโปรไฟล์ของผู้ใช้ (Profile & Favorites)
+        =========================================== -->
         <section id="gems-page" style="display: none;">
-            <div class="hero-banner gems-banner">
-                <span class="badge badge-creative">ระบบรางวัล</span>
-                <h1>💰 คลัง Gem ของคุณ</h1>
-                <p>สะสมและปลดล็อก Gem เพื่อรับสิทธิพิเศษที่แตกต่าง!</p>
-            </div>
-
-            <div class="category-container gems-status-container">
-                <div id="gemCountDisplay" class="btn-filter active" style="cursor: default; display: inline-flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-gem" style="color: #60A5FA; font-size: 1.2rem;"></i> Gem ของฉัน: 0
+            
+            <div class="hero-banner gems-banner" style="padding: 40px 24px; text-align: left; display: flex; align-items: center; gap: 24px; background: linear-gradient(135deg, #3B82F6 0%, #9333EA 100%); border-radius: 12px; margin-bottom: 24px;">
+                <div id="profileAvatarBig" style="width: 80px; height: 80px; min-width: 80px; background: rgba(255,255,255,0.2); border: 4px solid #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; overflow: hidden;">👤</div>
+                <div>
+                    <span class="badge badge-creative" style="background: rgba(255,255,255,0.2); color: #fff; margin-bottom: 8px;">สมาชิก PromptChom</span>
+                    <h1 id="profileNameBig" style="font-size: 2rem; margin: 0; color: #fff;">กรุณาล็อกอิน</h1>
+                    <p id="profileEmailBig" style="margin: 4px 0 0 0; opacity: 0.9; font-size: 1rem; color: #E2E8F0;">-</p>
                 </div>
             </div>
 
-            <div class="search-container gem-info-card">
-                <h2 style="margin-top: 0;">✨ Gem คืออะไร?</h2>
-                <p><b>Gem</b> คือแต้มสะสมพิเศษภายในแพลตฟอร์ม PromptHub ที่มอบให้กับผู้ใช้งานเพื่อใช้เป็นรางวัลจากการใช้งานคลังคำสั่งของเรา ยิ่งคุณใช้งาน หรือมีส่วนร่วมมากเท่าไหร่ คุณจะได้รับ Gem มากขึ้นเท่านั้น</p>
-                
-                <h2>🛠️ วิธีการใช้งานและรับ Gem</h2>
-                <p>* <b>Daily Login:</b> เพียงเข้ามาใช้งานเว็บทุกวัน ก็รับ Gem ไปเลย!</p>
-                <p>* <b>Copy & Use:</b> ทุกครั้งที่คุณก๊อปปี้คำสั่ง Système มอบ Gem ให้อัตโนมัติ</p>
-                <p>* <b>Share Knowledge:</b> แชร์ Prompt ไปยัง Social Media ของคุณ ได้รับโบนัส Gem!</p>
-            </div>
-
-            <div class="search-container gem-info-card">
-                <h2>🎁 รายการระดับรางวัล (Gem Tiers)</h2>
-                <p>ปลดล็อกระดับใหม่ๆ ด้วย Gem ของคุณ!</p>
-            </div>
-
-            <div class="gem-list-container">
-                <div class="gem-list-item tier-sapphire">
-                    <div class="gem-info">
-                        <div class="gem-icon-wrapper blue-gem">
-                            <svg viewBox="0 0 512 512" class="gem-svg-icon" fill="currentColor">
-                                <path d="M256,0L32,192h144L64,320h160L96,512l192-224H144L288,160H112L256,0z"/>
-                            </svg>
-                        </div>
-                        <div class="gem-text-group">
-                            <span class="gem-name">Gem Genesis</span>
-                            <span class="gem-symbol">เริ่มต้นสะสม</span>
-                        </div>
+            <!-- กล่องแสดง Gem ฉบับคลีน (นำปุ่มเติมออกเพราะย้ายไปบน Header แล้ว) -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 32px;">
+                <div class="gem-info-card" style="margin-bottom: 0; display: flex; align-items: center; gap: 20px;">
+                    <div style="width: 60px; height: 60px; background: #DBEAFE; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-gem" style="font-size: 2rem; color: #3B82F6;"></i>
                     </div>
-                    <span class="gem-level">เลเวล 1</span>
+                    <div>
+                        <h3 style="margin: 0 0 4px 0; color: #64748B; font-size: 1rem;">Gem ของฉัน</h3>
+                        <div id="gemCountDisplay" style="font-size: 1.8rem; font-weight: 800; color: #1E3A8A;">0</div>
+                    </div>
                 </div>
 
-                <div class="gem-list-item tier-amethyst">
-                    <div class="gem-info">
-                        <div class="gem-icon-wrapper purple-gem">
-                            <svg viewBox="0 0 512 512" class="gem-svg-icon" fill="currentColor">
-                                <path d="M256,0L0,256l256,256l256-256L256,0z M256,64.3l191.7,191.7L256,447.7L64.3,256L256,64.3z"/>
-                            </svg>
-                        </div>
-                        <div class="gem-text-group">
-                            <span class="gem-name">Prompt Sapphire</span>
-                            <span class="gem-symbol">ผู้ใช้ระดับสูง</span>
-                        </div>
+                <div class="gem-info-card" style="margin-bottom: 0;">
+                    <h3 style="margin: 0 0 8px 0; color: #1E3A8A;"><i class="fas fa-info-circle"></i> Gem คืออะไร?</h3>
+                    <p style="font-size: 0.9rem; margin: 0; color: #64748B;">แต้มสะสมพิเศษสำหรับปลดล็อก Prompt ระดับพรีเมียม คุณจะได้รับ <b style="color: #9333EA;">+5 Gem</b> อัตโนมัติทุกครั้งที่กดคัดลอกคำสั่งไปใช้งาน!</p>
+                </div>
+            </div>
+
+            <div class="gem-info-card" style="max-width: 100%; padding: 32px 24px;">
+                <h2 style="margin: 0 0 24px 0; color: #1E3A8A; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-heart" style="color: #EF4444;"></i> Prompt โปรดของฉัน
+                </h2>
+                <div id="profile-favorites-grid" class="prompt-grid"></div>
+            </div>
+
+        </section>
+
+        <!-- ==========================================
+             หน้าสุ่มรางวัล (Lucky Spin Page)
+        =========================================== -->
+        <section id="spin-page" style="display: none; padding: 40px 20px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box;">
+            
+            <div class="hero-banner gems-banner" style="background: linear-gradient(135deg, #F59E0B 0%, #EA580C 100%); margin-bottom: 32px; border-radius: 12px; text-align: center; padding: 40px 32px;">
+                <span class="badge" style="background: rgba(255,255,255,0.2); color: #fff; margin-bottom: 8px;">มินิเกมเสี่ยงโชค</span>
+                <h1 style="color: #fff; font-size: 2.5rem; margin: 0;"><i class="fas fa-ticket-alt"></i> Lucky Spin วงล้อเปิดกล่องสุ่ม</h1>
+                <p style="color: #FEF3C7; margin: 8px 0 0 0; font-size: 1.1rem;">วัดดวงของคุณวันนี้! ใช้ 20 Gem ต่อการหมุน 1 ครั้ง ลุ้นรับแจ็คพอต 500 Gem!</p>
+            </div>
+
+            <div class="gem-info-card" style="text-align: center; overflow: hidden; position: relative; padding: 40px 20px;">
+                <div class="roulette-window">
+                    <div class="roulette-pointer"><i class="fas fa-caret-down"></i></div>
+                    <div class="roulette-track" id="rouletteTrack">
+                        <div class="roulette-item rare"><i class="fas fa-question-circle"></i><span>?</span></div>
+                        <div class="roulette-item rare"><i class="fas fa-question-circle"></i><span>?</span></div>
+                        <div class="roulette-item rare"><i class="fas fa-question-circle"></i><span>?</span></div>
+                        <div class="roulette-item rare"><i class="fas fa-question-circle"></i><span>?</span></div>
+                        <div class="roulette-item rare"><i class="fas fa-question-circle"></i><span>?</span></div>
                     </div>
-                    <span class="gem-level">เลเวล 5</span>
                 </div>
 
-                <div class="gem-list-item tier-diamond">
-                    <div class="gem-info">
-                        <div class="gem-icon-wrapper pink-gem">
-                            <i class="fas fa-crown" style="font-size: 1.2rem;"></i>
-                        </div>
-                        <div class="gem-text-group">
-                            <span class="gem-name">AI Amethyst</span>
-                            <span class="gem-symbol">คลังคัดสรรพิเศษ</span>
+                <button id="btnSpin" class="btn-confirm" onclick="startSpin()" style="margin-top: 32px; font-size: 1.2rem; padding: 16px 40px; border-radius: 99px; background-color: #EA580C; border: none; color: white; cursor: pointer; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.4); transition: all 0.3s ease;">
+                    <i class="fas fa-play"></i> เริ่มสุ่ม (20 Gem)
+                </button>
+            </div>
+
+        </section>
+
+        <!-- ==========================================
+             หน้าติดต่อเรา (Contact Us)
+        =========================================== -->
+        <section id="contact-page" style="display: none; padding: 40px 20px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box;">
+            
+            <div class="hero-banner gems-banner" style="background: linear-gradient(135deg, #0F766E 0%, #0369A1 100%); margin-bottom: 32px; border-radius: 12px; text-align: left; padding: 40px 32px;">
+                <span class="badge badge-marketing" style="background: rgba(255,255,255,0.2); color: #fff; margin-bottom: 8px;">Support Center</span>
+                <h1 style="color: #fff; font-size: 2.5rem; margin: 0;">ติดต่อทีมงาน PromptChom</h1>
+                <p style="color: #E0F2FE; margin: 8px 0 0 0; font-size: 1.1rem;">มีคำถาม พบปัญหา หรืออยากเสนอแนะไอเดียใหม่ๆ ทักหาเราได้เลย!</p>
+            </div>
+
+            <div class="contact-layout">
+                <div class="contact-info-card">
+                    <h2 style="color: #1E3A8A; margin-top: 0; font-size: 1.5rem;">ช่องทางการติดต่อ</h2>
+                    <p style="color: #64748B; margin-bottom: 32px;">เราพร้อมรับฟังทุกความคิดเห็น เพื่อนำไปพัฒนาคลัง Prompt ให้ดียิ่งขึ้นสำหรับทุกคนครับ</p>
+                    
+                    <div class="contact-method">
+                        <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                        <div>
+                            <h4 style="margin: 0 0 4px 0; color: #334155; font-size: 1.1rem;">อีเมล</h4>
+                            <p style="margin: 0; color: #64748B;">support@promptchom.com</p>
                         </div>
                     </div>
-                    <span class="gem-level">เลเวล 10+</span>
+                    
+                    <div class="contact-method">
+                        <div class="contact-icon"><i class="fab fa-facebook-messenger"></i></div>
+                        <div>
+                            <h4 style="margin: 0 0 4px 0; color: #334155; font-size: 1.1rem;">Facebook Messenger</h4>
+                            <p style="margin: 0; color: #64748B;">@PromptChomTH</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-form-card">
+                    <form id="contactForm" onsubmit="submitContactForm(event)">
+                        <div class="form-group">
+                            <label for="contactName">ชื่อของคุณ</label>
+                            <input type="text" id="contactName" required placeholder="เช่น สมชาย ใจดี">
+                        </div>
+                        <div class="form-group">
+                            <label for="contactEmail">อีเมลสำหรับติดต่อกลับ</label>
+                            <input type="email" id="contactEmail" required placeholder="example@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="contactSubject">หมวดหมู่ที่ต้องการติดต่อ</label>
+                            <select id="contactSubject" required>
+                                <option value="">-- กรุณาเลือกหมวดหมู่ --</option>
+                                <option value="support">แจ้งปัญหาการใช้งาน</option>
+                                <option value="suggestion">เสนอแนะ/รีวิว</option>
+                                <option value="partnership">ติดต่อธุรกิจ</option>
+                                <option value="other">อื่นๆ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactMessage">ข้อความของคุณ</label>
+                            <textarea id="contactMessage" rows="5" required placeholder="พิมพ์รายละเอียดข้อความของคุณที่นี่..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-confirm" style="width: 100%; padding: 14px; font-size: 1.1rem; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                            <i class="fas fa-paper-plane"></i> ส่งข้อความ
+                        </button>
+                    </form>
                 </div>
             </div>
         </section>
 
+        <!-- ==========================================
+             หน้าแรก: กล่อง Prompt รวมทั้งหมด
+        =========================================== -->
         <div class="prompt-grid" id="prompt-container">
-            </div>
+        </div>
 
     </main>
 
+    <!-- ==========================================
+         หน้าต่างเข้าสู่ระบบ (Login Modal)
+    =========================================== -->
     <div id="loginModal" class="modal-overlay">
         <div class="modal-content">
             <i class="fab fa-google" style="font-size: 3rem; color: #DB4437; margin-bottom: 16px;"></i>
@@ -172,7 +239,37 @@
             <p style="text-align: center; margin-top: 16px; font-size: 0.85rem;">
                 <a href="#" onclick="loginAsAdmin(); return false;" style="color: #6B7280; text-decoration: underline;">เข้าสู่ระบบด้วย Email (สำหรับ Admin)</a>
             </p>
+        </div>
+    </div>
 
+    <!-- ==========================================
+         หน้าต่างร้านค้าเติม Gem (Top-up Store)
+    =========================================== -->
+    <div id="topupModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px;">
+            <i class="fas fa-store" style="font-size: 3rem; color: #10B981; margin-bottom: 16px;"></i>
+            <h2 style="margin-bottom: 8px;">ร้านค้า PromptChom</h2>
+            <p style="margin-bottom: 24px;">เลือกแพ็กเกจ Gem ที่คุณต้องการ (ระบบจำลอง)</p>
+
+            <div class="topup-grid">
+                <div class="topup-card" onclick="processTopup(100, 29)">
+                    <div class="topup-amount">100 <i class="fas fa-gem" style="color: #60A5FA;"></i></div>
+                    <div class="topup-price">฿29</div>
+                </div>
+                <div class="topup-card popular" onclick="processTopup(500, 129)">
+                    <div class="popular-badge">คุ้มค่าสุด!</div>
+                    <div class="topup-amount">500 <i class="fas fa-gem" style="color: #60A5FA;"></i></div>
+                    <div class="topup-price">฿129</div>
+                </div>
+                <div class="topup-card" onclick="processTopup(1200, 259)">
+                    <div class="topup-amount">1,200 <i class="fas fa-gem" style="color: #60A5FA;"></i></div>
+                    <div class="topup-price">฿259</div>
+                </div>
+            </div>
+
+            <div class="modal-actions" style="margin-top: 24px;">
+                <button onclick="closeTopupModal()" class="btn-cancel" style="width: 100%;">ปิดหน้าต่าง</button>
+            </div>
         </div>
     </div>
 
