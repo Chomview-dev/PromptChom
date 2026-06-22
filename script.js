@@ -571,44 +571,63 @@ function processTopup(gemAmount, price) {
 
 function closeSlipModal() { document.getElementById('slipModal').classList.remove('show'); }
 
+// อัปโหลดสลิปเข้า Firebase พร้อมระบบบีบอัดภาพอัตโนมัติ
 function handleSlipUpload(event) {
     const file = event.target.files[0];
     if (!file) return; 
 
-    // เช็คขนาดไฟล์ไม่ให้เกิน 1MB 
-    if (file.size > 1024 * 1024) {
-        alert("❌ ขนาดไฟล์ภาพใหญ่เกินไป กรุณาใช้ภาพที่ไม่เกิน 1MB ครับ");
-        return;
-    }
-
+    // เปลี่ยนหน้าจอเป็นสถานะกำลังโหลดทันทีที่เลือกไฟล์เสร็จ
     document.getElementById('uploadZone').style.display = 'none';
     document.getElementById('slipProcessing').style.display = 'block';
 
     const reader = new FileReader();
-    reader.onload = async function(e) {
-        const base64Image = e.target.result; 
-        
-        try {
-            await db.collection('topup_requests').add({
-                userId: currentUser.uid,
-                userName: currentUser.displayName || 'User',
-                userEmail: currentUser.email,
-                gemsRequested: pendingTopup.gems,
-                amountPaid: pendingTopup.price,
-                slipImage: base64Image,
-                status: 'pending', 
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+    reader.onload = function(e) {
+        // สร้างออบเจกต์ Image เพื่อเตรียมย่อขนาด
+        const img = new Image();
+        img.onload = async function() {
+            // สร้าง Canvas เพื่อวาดภาพใหม่ให้ขนาดเล็กลง
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 600; // กำหนดความกว้างสูงสุดให้เหลือแค่ 600px
+            let scaleSize = 1;
+            
+            if (img.width > MAX_WIDTH) {
+                scaleSize = MAX_WIDTH / img.width;
+            }
+            
+            canvas.width = img.width * scaleSize;
+            canvas.height = img.height * scaleSize;
 
-            closeSlipModal();
-            showToast(`⏳ อัปโหลดสลิปสำเร็จ! กรุณารอแอดมินตรวจสอบครับ`);
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        } catch (error) {
-            console.error(error);
-            alert("❌ เกิดข้อผิดพลาดในการส่งสลิป");
-            closeSlipModal();
-        }
+            // แปลงภาพที่ย่อแล้วเป็น Base64 (ตั้งค่าคุณภาพ JPEG ที่ 70% เพื่อให้ไฟล์เล็กสุดๆ)
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+            
+            try {
+                // บันทึกคำขอลง Collection 'topup_requests'
+                await db.collection('topup_requests').add({
+                    userId: currentUser.uid,
+                    userName: currentUser.displayName || 'User',
+                    userEmail: currentUser.email,
+                    gemsRequested: pendingTopup.gems,
+                    amountPaid: pendingTopup.price,
+                    slipImage: compressedBase64, // ใช้ภาพที่บีบอัดแล้ว
+                    status: 'pending', 
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                closeSlipModal();
+                showToast(`⏳ อัปโหลดสลิปสำเร็จ! กรุณารอแอดมินตรวจสอบครับ`);
+
+            } catch (error) {
+                console.error("Error saving to Firebase:", error);
+                alert("❌ เกิดข้อผิดพลาดในการส่งสลิป (รูปอาจจะยังใหญ่เกินไป)");
+                closeSlipModal();
+            }
+        };
+        img.src = e.target.result;
     };
+    // อ่านไฟล์ที่อัปโหลดมา
     reader.readAsDataURL(file);
 }
 
