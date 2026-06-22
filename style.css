@@ -406,3 +406,68 @@ body.dark-mode .topup-card:hover { border-color: #10B981; background: rgba(16, 1
 body.dark-mode .topup-card.popular { border-color: #F59E0B; background: rgba(245, 158, 11, 0.1); }
 body.dark-mode .topup-amount { color: #F8FAFC; }
 body.dark-mode .topup-price { background: #1E293B; }
+
+/* =========================================
+   ระบบหลังบ้าน (Admin Dashboard UI)
+========================================= */
+.topup-request-card {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.slip-thumbnail {
+    width: 80px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid #CBD5E1;
+    transition: transform 0.2s;
+}
+
+.slip-thumbnail:hover {
+    transform: scale(1.1);
+}
+
+.request-info { flex: 1; }
+.request-info h4 { margin: 0 0 8px 0; color: #1E3A8A; font-size: 1.1rem; }
+.request-info p { margin: 0 0 4px 0; color: #64748B; font-size: 0.9rem; }
+
+.btn-approve {
+    background: #10B981;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-approve:hover { background: #059669; }
+
+.btn-reject {
+    background: #F8FAFC;
+    color: #EF4444;
+    border: 1px solid #FECACA;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-reject:hover { background: #FEF2F2; border-color: #EF4444; }
+
+/* รองรับโหมดมืด */
+body.dark-mode .topup-request-card { background: #1E293B; border-color: #334155; }
+body.dark-mode .request-info h4 { color: #F8FAFC; }
+body.dark-mode .request-info p { color: #CBD5E1; }
+body.dark-mode .btn-reject { background: #0F172A; border-color: #7F1D1D; }

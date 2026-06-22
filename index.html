@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Prompt Directory</title>
-    <link rel="stylesheet" href="style.css?v=1001">
+    <link rel="stylesheet" href="style.css?v=1002">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
 </head>
@@ -20,6 +20,8 @@
                 <a href="#" id="homeLink">หน้าแรก</a>
                 <a href="#" id="spinLink"><i class="fas fa-gift" style="color: #F59E0B;"></i> สุ่มรางวัล</a>
                 <a href="#" id="gemsLink"><i class="fas fa-user-circle"></i> โปรไฟล์ของฉัน</a>
+                
+                <a href="#" id="adminLink" style="display: none; color: #EF4444;"><i class="fas fa-shield-alt"></i> จัดการระบบ</a>
                 
                 <div class="dropdown">
                     <a href="#" class="dropbtn">หมวดหมู่ <i class="fas fa-chevron-down dropdown-arrow"></i></a>
@@ -37,7 +39,6 @@
                 
                 <a href="#" id="contactLink">ติดต่อเรา</a>
                 
-                <!-- ปุ่มแคปซูลแสดงสถานะ Gem และเติมเงิน -->
                 <div id="headerGemContainer" class="header-gem-pill" style="display: none;" onclick="openTopupModal()">
                     <i class="fas fa-gem" style="color: #3B82F6;"></i>
                     <span id="headerGemCount">0</span>
@@ -76,9 +77,6 @@
             <a href="https://claude.ai/" target="_blank" class="ai-link btn-claude"><i class="fas fa-brain"></i> Claude</a>
         </div>
 
-        <!-- ==========================================
-             หน้าโปรไฟล์ของผู้ใช้ (Profile & Favorites)
-        =========================================== -->
         <section id="gems-page" style="display: none;">
             
             <div class="hero-banner gems-banner" style="padding: 40px 24px; text-align: left; display: flex; align-items: center; gap: 24px; background: linear-gradient(135deg, #3B82F6 0%, #9333EA 100%); border-radius: 12px; margin-bottom: 24px;">
@@ -90,7 +88,6 @@
                 </div>
             </div>
 
-            <!-- กล่องแสดง Gem ฉบับคลีน (นำปุ่มเติมออกเพราะย้ายไปบน Header แล้ว) -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 32px;">
                 <div class="gem-info-card" style="margin-bottom: 0; display: flex; align-items: center; gap: 20px;">
                     <div style="width: 60px; height: 60px; background: #DBEAFE; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
@@ -117,9 +114,6 @@
 
         </section>
 
-        <!-- ==========================================
-             หน้าสุ่มรางวัล (Lucky Spin Page)
-        =========================================== -->
         <section id="spin-page" style="display: none; padding: 40px 20px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box;">
             
             <div class="hero-banner gems-banner" style="background: linear-gradient(135deg, #F59E0B 0%, #EA580C 100%); margin-bottom: 32px; border-radius: 12px; text-align: center; padding: 40px 32px;">
@@ -147,9 +141,6 @@
 
         </section>
 
-        <!-- ==========================================
-             หน้าติดต่อเรา (Contact Us)
-        =========================================== -->
         <section id="contact-page" style="display: none; padding: 40px 20px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box;">
             
             <div class="hero-banner gems-banner" style="background: linear-gradient(135deg, #0F766E 0%, #0369A1 100%); margin-bottom: 32px; border-radius: 12px; text-align: left; padding: 40px 32px;">
@@ -212,17 +203,25 @@
             </div>
         </section>
 
-        <!-- ==========================================
-             หน้าแรก: กล่อง Prompt รวมทั้งหมด
-        =========================================== -->
+        <section id="admin-page" style="display: none; width: 100%; max-width: 1200px; margin: 0 auto;">
+            <div class="hero-banner gems-banner" style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); margin-bottom: 32px; border-radius: 12px; text-align: left; padding: 32px;">
+                <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #FCA5A5; margin-bottom: 8px;">Admin Area</span>
+                <h1 style="color: #fff; font-size: 2rem; margin: 0;"><i class="fas fa-tasks"></i> ระบบจัดการรายการเติมเงิน</h1>
+                <p style="color: #94A3B8; margin: 8px 0 0 0;">ตรวจสอบสลิปและอนุมัติ Gem ให้ผู้ใช้งาน</p>
+            </div>
+
+            <div class="gem-info-card">
+                <h2 style="margin-top: 0; color: #1E3A8A;"><i class="fas fa-clock"></i> รายการรอตรวจสอบ (Pending)</h2>
+                <div id="admin-topup-list" style="display: flex; flex-direction: column; gap: 16px;">
+                    </div>
+            </div>
+        </section>
+
         <div class="prompt-grid" id="prompt-container">
         </div>
 
     </main>
 
-    <!-- ==========================================
-         หน้าต่างเข้าสู่ระบบ (Login Modal)
-    =========================================== -->
     <div id="loginModal" class="modal-overlay">
         <div class="modal-content">
             <i class="fab fa-google" style="font-size: 3rem; color: #DB4437; margin-bottom: 16px;"></i>
@@ -242,14 +241,11 @@
         </div>
     </div>
 
-    <!-- ==========================================
-         หน้าต่างร้านค้าเติม Gem (Top-up Store)
-    =========================================== -->
     <div id="topupModal" class="modal-overlay">
         <div class="modal-content" style="max-width: 500px;">
             <i class="fas fa-store" style="font-size: 3rem; color: #10B981; margin-bottom: 16px;"></i>
             <h2 style="margin-bottom: 8px;">ร้านค้า PromptChom</h2>
-            <p style="margin-bottom: 24px;">เลือกแพ็กเกจ Gem ที่คุณต้องการ (ระบบจำลอง)</p>
+            <p style="margin-bottom: 24px;">เลือกแพ็กเกจ Gem ที่คุณต้องการ</p>
 
             <div class="topup-grid">
                 <div class="topup-card" onclick="processTopup(100, 29)">
@@ -273,11 +269,41 @@
         </div>
     </div>
 
+    <div id="slipModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 400px; padding: 32px 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; font-size: 1.25rem;">ชำระเงินผ่าน PromptPay</h2>
+                <button onclick="closeSlipModal()" style="background: none; border: none; font-size: 1.5rem; color: #94A3B8; cursor: pointer;">&times;</button>
+            </div>
+
+            <div style="background: #1E3A8A; color: white; padding: 20px; border-radius: 12px; margin-bottom: 24px;">
+                <p style="margin: 0 0 8px 0; font-size: 0.9rem; opacity: 0.8;">สแกนเพื่อชำระเงินเข้าบัญชี PromptChom</p>
+                <div style="background: white; padding: 16px; border-radius: 8px; display: inline-block; margin-bottom: 12px;">
+                    <i class="fas fa-qrcode" style="font-size: 8rem; color: #1E293B;"></i>
+                </div>
+                <div style="font-size: 1.5rem; font-weight: 700;">ยอดชำระ: ฿<span id="slipPayAmount">0</span></div>
+                <div style="font-size: 0.9rem; margin-top: 4px; color: #93C5FD;">คุณจะได้รับ: <span id="slipGemAmount">0</span> Gem</div>
+            </div>
+
+            <div class="upload-zone" id="uploadZone" onclick="document.getElementById('slipFileInput').click()">
+                <i class="fas fa-cloud-upload-alt" style="font-size: 2.5rem; color: #64748B; margin-bottom: 12px;"></i>
+                <h3 style="margin: 0 0 4px 0; font-size: 1rem; color: #334155;">คลิกเพื่ออัปโหลดสลิป</h3>
+                <p style="margin: 0; font-size: 0.8rem; color: #94A3B8;">รองรับไฟล์ JPG, PNG ไม่เกิน 1MB</p>
+                <input type="file" id="slipFileInput" accept="image/*" style="display: none;" onchange="handleSlipUpload(event)">
+            </div>
+            
+            <div id="slipProcessing" style="display: none; padding: 32px 0;">
+                <i class="fas fa-circle-notch fa-spin" style="font-size: 3rem; color: #10B981; margin-bottom: 16px;"></i>
+                <h3 style="color: #10B981; margin: 0;">กำลังอัปโหลดข้อมูล...</h3>
+            </div>
+        </div>
+    </div>
+
     <footer class="site-footer">
         <p>&copy; 2026 AI Prompt Directory. ออกแบบและพัฒนาด้วยความตั้งใจ</p>
     </footer>
 
-    <div id="toast" class="toast"><i class="fas fa-check-circle" style="margin-right: 8px;"></i>คัดลอกคำสั่งสำเร็จ!</div>
+    <div id="toast" class="toast"><i class="fas fa-check-circle" style="margin-right: 8px;"></i>ทำรายการสำเร็จ!</div>
     <button id="backToTop" class="btn-back-to-top"><i class="fas fa-arrow-up"></i></button>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>

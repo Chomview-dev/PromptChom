@@ -1,11 +1,11 @@
 // ==========================================
 // ส่วนที่ 1: ระบบแจ้งเตือน และคัดลอก (Copy)
 // ==========================================
-function showToast(message = "คัดลอกสำเร็จ!") {
+function showToast(message = "สำเร็จ!") {
     const toast = document.getElementById("toast");
-    toast.innerText = message;
+    toast.innerHTML = `<i class="fas fa-check-circle" style="margin-right: 8px;"></i>${message}`;
     toast.classList.add("show");
-    setTimeout(() => toast.classList.remove("show"), 2500);
+    setTimeout(() => toast.classList.remove("show"), 3000);
 }
 
 async function copyPrompt(elementId, buttonElement) {
@@ -28,7 +28,7 @@ async function copyPrompt(elementId, buttonElement) {
             buttonFeedbackText = `+5 Gem 💎`;
             showToast(`คัดลอกสำเร็จ! ได้รับ 5 Gem 💎`);
         } else {
-            showToast("คัดลอกสำเร็จ!");
+            showToast("คัดลอกคำสั่งสำเร็จ!");
         }
 
         buttonElement.classList.add('copied');
@@ -210,6 +210,7 @@ function initAuth() {
         const loginBtn = document.getElementById('loginBtn');
         const userProfile = document.getElementById('userProfile');
         const headerGemContainer = document.getElementById('headerGemContainer');
+        const adminLink = document.getElementById('adminLink');
 
         const profileNameBig = document.getElementById('profileNameBig');
         const profileEmailBig = document.getElementById('profileEmailBig');
@@ -229,9 +230,14 @@ function initAuth() {
                 unlockedPrompts = userData.unlockedPrompts || [];
 
                 let userNameDisplay = user.displayName || 'User';
+                
+                // ตรวจสอบสิทธิ์ Admin
                 if (userData.role === 'admin') {
                     userNameDisplay = "Admin 👑";
-                    showToast("ล็อกอินสำเร็จ! ยินดีต้อนรับท่าน Admin 👑");
+                    if(adminLink) adminLink.style.display = 'inline-flex';
+                    loadAdminTopups(); // โหลดข้อมูลสลิปที่รอตรวจสอบ
+                } else {
+                    if(adminLink) adminLink.style.display = 'none';
                 }
                 
                 if (profileNameBig) profileNameBig.innerText = userNameDisplay;
@@ -262,6 +268,7 @@ function initAuth() {
             if(loginBtn) loginBtn.style.display = 'inline-flex';
             if(headerGemContainer) headerGemContainer.style.display = 'none';
             if(userProfile) userProfile.style.display = 'none';
+            if(adminLink) adminLink.style.display = 'none';
         }
         loadPrompts();
     });
@@ -317,7 +324,7 @@ function loginAsAdmin() {
     auth.signInWithEmailAndPassword(email, password)
         .then(() => {
             closeLoginModal();
-            document.getElementById('gemsLink').click(); 
+            document.getElementById('homeLink').click(); 
         })
         .catch(() => alert("❌ ล็อกอินล้มเหลว: รหัสผ่านผิด หรืออีเมลไม่ถูกต้อง"));
 }
@@ -330,18 +337,21 @@ function initNavigation() {
     const spinLink = document.getElementById('spinLink'); 
     const gemsLink = document.getElementById('gemsLink'); 
     const contactLink = document.getElementById('contactLink');
+    const adminLink = document.getElementById('adminLink');
     const logoLink = document.querySelector('.logo'); 
     
     const promptContainer = document.getElementById('prompt-container');
     const gemsPage = document.getElementById('gems-page');
     const contactPage = document.getElementById('contact-page');
     const spinPage = document.getElementById('spin-page'); 
+    const adminPage = document.getElementById('admin-page');
     
     const hideAllPages = () => {
         promptContainer.style.display = 'none'; 
         gemsPage.style.display = 'none'; 
         contactPage.style.display = 'none'; 
         if (spinPage) spinPage.style.display = 'none';
+        if (adminPage) adminPage.style.display = 'none';
         document.querySelector('.search-container').style.display = 'none';
         document.querySelector('.ai-links-container').style.display = 'none';
     };
@@ -389,6 +399,15 @@ function initNavigation() {
             e.preventDefault();
             hideAllPages();
             contactPage.style.display = 'block'; 
+        });
+    }
+
+    if (adminLink) {
+        adminLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            hideAllPages();
+            if (adminPage) adminPage.style.display = 'block'; 
+            loadAdminTopups();
         });
     }
 }
@@ -525,49 +544,131 @@ async function startSpin() {
 }
 
 // ==========================================
-// ส่วนที่ 11: ระบบเติม Gem (Top-up Store - Mock Payment)
+// ส่วนที่ 11: ระบบเติม Gem (อัปโหลดสลิปเข้าฐานข้อมูลจริง)
 // ==========================================
+let pendingTopup = { gems: 0, price: 0 }; 
+
 function openTopupModal() { 
     if (!currentUser) return openLoginModal();
     document.getElementById('topupModal').classList.add('show'); 
 }
-function closeTopupModal() { 
-    document.getElementById('topupModal').classList.remove('show'); 
+function closeTopupModal() { document.getElementById('topupModal').classList.remove('show'); }
+
+function processTopup(gemAmount, price) {
+    if (!currentUser) return;
+    pendingTopup.gems = gemAmount;
+    pendingTopup.price = price;
+    
+    document.getElementById('slipPayAmount').innerText = price;
+    document.getElementById('slipGemAmount').innerText = gemAmount;
+    
+    closeTopupModal();
+    document.getElementById('slipModal').classList.add('show');
+    document.getElementById('uploadZone').style.display = 'block';
+    document.getElementById('slipProcessing').style.display = 'none';
+    document.getElementById('slipFileInput').value = '';
 }
 
-async function processTopup(gemAmount, price) {
-    if (!currentUser) return;
+function closeSlipModal() { document.getElementById('slipModal').classList.remove('show'); }
 
-    const originalContent = document.querySelector('#topupModal .modal-content').innerHTML;
-    document.querySelector('#topupModal .modal-content').innerHTML = `
-        <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #10B981; margin-bottom: 16px;"></i>
-        <h2>กำลังประมวลผล...</h2>
-        <p>กรุณารอสักครู่ ระบบกำลังยืนยันการชำระเงิน ฿${price}</p>
-    `;
+function handleSlipUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return; 
 
-    setTimeout(async () => {
+    // เช็คขนาดไฟล์ไม่ให้เกิน 1MB 
+    if (file.size > 1024 * 1024) {
+        alert("❌ ขนาดไฟล์ภาพใหญ่เกินไป กรุณาใช้ภาพที่ไม่เกิน 1MB ครับ");
+        return;
+    }
+
+    document.getElementById('uploadZone').style.display = 'none';
+    document.getElementById('slipProcessing').style.display = 'block';
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        const base64Image = e.target.result; 
+        
         try {
-            const userRef = db.collection('users').doc(currentUser.uid);
-            await userRef.update({ gems: firebase.firestore.FieldValue.increment(gemAmount) });
-            
-            const newDoc = await userRef.get();
-            updateGemDisplay(newDoc.data().gems);
-            
-            document.querySelector('#topupModal .modal-content').innerHTML = `
-                <i class="fas fa-check-circle" style="font-size: 4rem; color: #10B981; margin-bottom: 16px;"></i>
-                <h2 style="color: #10B981;">ชำระเงินสำเร็จ!</h2>
-                <p>คุณได้รับ <b style="color:#60A5FA;">${gemAmount} Gem</b> เรียบร้อยแล้ว</p>
-                <button onclick="closeTopupModal(); setTimeout(() => document.querySelector('#topupModal .modal-content').innerHTML = originalContent, 300);" class="btn-confirm" style="width: 100%; margin-top: 16px; background: #10B981;">กลับสู่หน้าโปรไฟล์</button>
-            `;
-            
-            showToast(`🎉 เติมเงินสำเร็จ! ได้รับ ${gemAmount} Gem`);
+            await db.collection('topup_requests').add({
+                userId: currentUser.uid,
+                userName: currentUser.displayName || 'User',
+                userEmail: currentUser.email,
+                gemsRequested: pendingTopup.gems,
+                amountPaid: pendingTopup.price,
+                slipImage: base64Image,
+                status: 'pending', 
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            closeSlipModal();
+            showToast(`⏳ อัปโหลดสลิปสำเร็จ! กรุณารอแอดมินตรวจสอบครับ`);
 
         } catch (error) {
-            alert("เกิดข้อผิดพลาดในการทำรายการ กรุณาลองใหม่อีกครั้ง");
-            closeTopupModal();
-            document.querySelector('#topupModal .modal-content').innerHTML = originalContent; 
+            console.error(error);
+            alert("❌ เกิดข้อผิดพลาดในการส่งสลิป");
+            closeSlipModal();
         }
-    }, 1500); 
+    };
+    reader.readAsDataURL(file);
+}
+
+// ==========================================
+// ส่วนที่ 12: ระบบจัดการของแอดมิน (Admin Dashboard)
+// ==========================================
+function loadAdminTopups() {
+    const listContainer = document.getElementById('admin-topup-list');
+    if (!listContainer) return;
+    
+    listContainer.innerHTML = '<p style="color: #64748B;">กำลังโหลดข้อมูล...</p>';
+
+    db.collection('topup_requests').where('status', '==', 'pending').onSnapshot(snapshot => {
+        listContainer.innerHTML = '';
+        if (snapshot.empty) {
+            listContainer.innerHTML = '<p style="color: #10B981; font-weight: 700;"><i class="fas fa-check-circle"></i> ไม่มีรายการค้างตรวจสอบครับ</p>';
+            return;
+        }
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            listContainer.innerHTML += `
+                <div class="topup-request-card" id="req-${doc.id}">
+                    <a href="${data.slipImage}" target="_blank" title="คลิกเพื่อดูรูปใหญ่">
+                        <img src="${data.slipImage}" class="slip-thumbnail" alt="สลิปโอนเงิน">
+                    </a>
+                    <div class="request-info">
+                        <h4>ขอเติม ${data.gemsRequested} Gem (ยอดโอน ฿${data.amountPaid})</h4>
+                        <p><b>ผู้ใช้:</b> ${data.userName} (${data.userEmail})</p>
+                        <p><b>เวลา:</b> ${data.createdAt ? data.createdAt.toDate().toLocaleString('th-TH') : 'เพิ่งส่ง'}</p>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-reject" onclick="processAdminAction('${doc.id}', '${data.userId}', 0, 'rejected')"><i class="fas fa-times"></i> ปฏิเสธ</button>
+                        <button class="btn-approve" onclick="processAdminAction('${doc.id}', '${data.userId}', ${data.gemsRequested}, 'approved')"><i class="fas fa-check"></i> อนุมัติ</button>
+                    </div>
+                </div>
+            `;
+        });
+    });
+}
+
+async function processAdminAction(requestId, userId, gemsToAdd, action) {
+    if (!confirm(`คุณต้องการ ${action === 'approved' ? 'อนุมัติ' : 'ปฏิเสธ'} รายการนี้ใช่หรือไม่?`)) return;
+
+    try {
+        const reqRef = db.collection('topup_requests').doc(requestId);
+        const userRef = db.collection('users').doc(userId);
+
+        if (action === 'approved') {
+            await userRef.update({ gems: firebase.firestore.FieldValue.increment(gemsToAdd) });
+        }
+        
+        await reqRef.update({ status: action });
+        
+        showToast(action === 'approved' ? "✅ อนุมัติและเติม Gem สำเร็จ!" : "❌ ปฏิเสธรายการสำเร็จ");
+
+    } catch (error) {
+        console.error(error);
+        alert("เกิดข้อผิดพลาดในการประมวลผล");
+    }
 }
 
 // เรียกใช้งานฟังก์ชันเริ่มต้น
