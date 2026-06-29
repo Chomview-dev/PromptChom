@@ -75,76 +75,92 @@ async function toggleFavorite(promptId, btnElement) {
 }
 
 // ==========================================
-// ส่วนที่ 3: โหลดข้อมูล และสร้างการ์ด Prompt
+// ส่วนที่ 3: โหลดข้อมูล และสร้างการ์ด Prompt (แบบ Real-time จาก Firebase)
 // ==========================================
-async function loadPrompts() {
-    const response = await fetch('database.json');
-    const promptsData = await response.json();
+function loadPrompts() {
     const container = document.getElementById('prompt-container');
     const profileFavContainer = document.getElementById('profile-favorites-grid'); 
     
-    container.innerHTML = '';
+    // แสดงสถานะกำลังโหลด
+    container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #64748B;"><i class="fas fa-circle-notch fa-spin fa-3x" style="color: #9333EA; margin-bottom: 16px;"></i><p>กำลังเชื่อมต่อฐานข้อมูลคำสั่ง AI...</p></div>';
     if (profileFavContainer) profileFavContainer.innerHTML = ''; 
-    let favCount = 0;
 
-    promptsData.forEach(item => {
-        const isFavorited = currentFavorites.includes(item.id);
-        const isUnlocked = unlockedPrompts.includes(item.id);
-        const isPremium = item.isPremium;
-        
-        const imageHTML = item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.title}" class="prompt-image">` : '';
-        const badgeHTML = item.categoryName ? `<span class="badge ${item.badgeColor}">${item.categoryName}</span>` : '';
-        const descHTML = item.description ? `<p class="prompt-description">${item.description}</p>` : '';
+    // onSnapshot จะดึงข้อมูลและอัปเดตหน้าเว็บอัตโนมัติเมื่อมีการเพิ่ม/ลบ Prompt
+    db.collection('prompts').onSnapshot(snapshot => {
+        container.innerHTML = '';
+        let favCount = 0;
 
-        const cardHTML = `
-            <div class="prompt-card ${isPremium && !isUnlocked ? 'premium' : ''}" data-category="${item.categoryId}" data-id="${item.id}">
-                
-                <button class="btn-favorite ${isFavorited ? 'active' : ''}" onclick="toggleFavorite('${item.id}', this)">
-                    <i class="${isFavorited ? 'fas fa-heart favorited' : 'far fa-heart'}"></i>
-                </button>
-                
-                ${imageHTML}
-                ${badgeHTML}
-                <h3>${item.title}</h3>
-                ${descHTML}
-                
-                <div style="position: relative;">
-                    ${(isPremium && !isUnlocked) ? `
-                    <div class="lock-overlay" style="border-radius: 8px;">
-                        <i class="fas fa-lock premium-lock-icon" style="font-size: 2rem;"></i>
-                        <button class="btn-unlock-premium" onclick="unlockPrompt('${item.id}', ${item.unlockPrice})" style="padding: 10px 24px; font-size: 1rem;">
-                            ปลดล็อก ${item.unlockPrice} Gem 💎
-                        </button>
-                    </div>` : ''}
-                    
-                    <div class="prompt-box-container ${(isPremium && !isUnlocked) ? 'premium-blur' : ''}">
-                        <p class="prompt-box" id="${item.id}-text">${(isPremium && !isUnlocked) ? '🔒 เนื้อหานี้เป็นความลับระดับพรีเมียม... กรุณาปลดล็อกเพื่อดูข้อความคำสั่งทั้งหมด' : item.content}</p>
-                    </div>
-                </div>
-                
-                ${(isPremium && !isUnlocked) ? `
-                <button class="btn-copy" style="opacity: 0.5; filter: grayscale(100%); cursor: not-allowed;" onclick="return false;">
-                    <span class="icon"><i class="fas fa-lock"></i></span> <span class="text">ปลดล็อกเพื่อคัดลอก</span>
-                </button>
-                ` : `
-                <button onclick="copyPrompt('${item.id}-text', this)" class="btn-copy">
-                    <span class="icon"><i class="fas fa-paste"></i></span> <span class="text">คัดลอกคำสั่ง</span>
-                </button>
-                `}
-            </div>
-        `;
-        
-        container.innerHTML += cardHTML;
-        
-        if (isFavorited && profileFavContainer) {
-            profileFavContainer.innerHTML += cardHTML;
-            favCount++;
+        if (snapshot.empty) {
+            container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #64748B;"><i class="fas fa-box-open fa-3x" style="margin-bottom: 16px;"></i><p>ยังไม่มีข้อมูล Prompt ในระบบ</p></div>';
+            return;
         }
-    });
 
-    if (profileFavContainer && favCount === 0) {
-        profileFavContainer.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #64748B;"><i class="far fa-folder-open" style="font-size: 3rem; margin-bottom: 16px; color: #CBD5E1;"></i><p>คุณยังไม่มี Prompt รายการโปรด<br>ลองกดหัวใจให้ Prompt ที่หน้าแรกดูสิ!</p></div>';
-    }
+        // จัดเรียงลำดับ (ถ้ามี) หรือแสดงตามที่ดึงมา
+        snapshot.forEach(doc => {
+            const item = doc.data();
+            item.id = doc.id; // ให้ ID ตรงกับ Document ใน Firebase
+
+            const isFavorited = currentFavorites.includes(item.id);
+            const isUnlocked = unlockedPrompts.includes(item.id);
+            const isPremium = item.isPremium || false;
+            
+            const imageHTML = item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.title}" class="prompt-image">` : '';
+            const badgeHTML = item.categoryName ? `<span class="badge ${item.badgeColor}">${item.categoryName}</span>` : '';
+            const descHTML = item.description ? `<p class="prompt-description">${item.description}</p>` : '';
+
+            const cardHTML = `
+                <div class="prompt-card ${isPremium && !isUnlocked ? 'premium' : ''}" data-category="${item.categoryId}" data-id="${item.id}">
+                    
+                    <button class="btn-favorite ${isFavorited ? 'active' : ''}" onclick="toggleFavorite('${item.id}', this)">
+                        <i class="${isFavorited ? 'fas fa-heart favorited' : 'far fa-heart'}"></i>
+                    </button>
+                    
+                    ${imageHTML}
+                    ${badgeHTML}
+                    <h3>${item.title}</h3>
+                    ${descHTML}
+                    
+                    <div style="position: relative;">
+                        ${(isPremium && !isUnlocked) ? `
+                        <div class="lock-overlay" style="border-radius: 8px;">
+                            <i class="fas fa-lock premium-lock-icon" style="font-size: 2rem;"></i>
+                            <button class="btn-unlock-premium" onclick="unlockPrompt('${item.id}', ${item.unlockPrice})" style="padding: 10px 24px; font-size: 1rem;">
+                                ปลดล็อก ${item.unlockPrice} Gem 💎
+                            </button>
+                        </div>` : ''}
+                        
+                        <div class="prompt-box-container ${(isPremium && !isUnlocked) ? 'premium-blur' : ''}">
+                            <p class="prompt-box" id="${item.id}-text">${(isPremium && !isUnlocked) ? '🔒 เนื้อหานี้เป็นความลับระดับพรีเมียม... กรุณาปลดล็อกเพื่อดูข้อความคำสั่งทั้งหมด' : item.content}</p>
+                        </div>
+                    </div>
+                    
+                    ${(isPremium && !isUnlocked) ? `
+                    <button class="btn-copy" style="opacity: 0.5; filter: grayscale(100%); cursor: not-allowed;" onclick="return false;">
+                        <span class="icon"><i class="fas fa-lock"></i></span> <span class="text">ปลดล็อกเพื่อคัดลอก</span>
+                    </button>
+                    ` : `
+                    <button onclick="copyPrompt('${item.id}-text', this)" class="btn-copy">
+                        <span class="icon"><i class="fas fa-paste"></i></span> <span class="text">คัดลอกคำสั่ง</span>
+                    </button>
+                    `}
+                </div>
+            `;
+            
+            container.innerHTML += cardHTML;
+            
+            if (isFavorited && profileFavContainer) {
+                profileFavContainer.innerHTML += cardHTML;
+                favCount++;
+            }
+        });
+
+        if (profileFavContainer && favCount === 0) {
+            profileFavContainer.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #64748B;"><i class="far fa-folder-open" style="font-size: 3rem; margin-bottom: 16px; color: #CBD5E1;"></i><p>คุณยังไม่มี Prompt รายการโปรด<br>ลองกดหัวใจให้ Prompt ที่หน้าแรกดูสิ!</p></div>';
+        }
+    }, error => {
+        console.error("เกิดข้อผิดพลาดในการโหลดข้อมูล Prompt:", error);
+        container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #EF4444;"><i class="fas fa-exclamation-triangle fa-2x" style="margin-bottom: 12px;"></i><p>ไม่สามารถเชื่อมต่อฐานข้อมูลได้</p></div>';
+    });
 }
 
 // ==========================================
@@ -236,8 +252,6 @@ function initAuth() {
                     userNameDisplay = "Admin 👑";
                     if(adminLink) adminLink.style.display = 'inline-flex';
                     loadAdminTopups(); // โหลดข้อมูลสลิปที่รอตรวจสอบ
-                } else {
-                    if(adminLink) adminLink.style.display = 'none';
                 }
                 
                 if (profileNameBig) profileNameBig.innerText = userNameDisplay;
@@ -381,7 +395,8 @@ function initNavigation() {
             e.preventDefault();
             if(!currentUser) return openLoginModal(); 
             hideAllPages();
-            spinPage.style.display = 'block'; 
+            spinPage.style.display = 'block';
+            loadSpinHistory(); 
         });
     }
 
@@ -391,6 +406,7 @@ function initNavigation() {
             if(!currentUser) return openLoginModal();
             hideAllPages();
             gemsPage.style.display = 'block'; 
+            loadUserTopupHistory();
         });
     }
 
@@ -473,6 +489,58 @@ function getRandomReward() {
     return rewardsPool[0]; 
 }
 
+// ตัวแปรสำหรับยกเลิกการดึงข้อมูลเพื่อประหยัดทรัพยากร
+let spinHistoryUnsubscribe = null;
+
+// ฟังก์ชันดึงประวัติการสุ่ม (ฉบับแก้บั๊ก Firebase Index)
+function loadSpinHistory() {
+    if (!currentUser) return;
+    const listContainer = document.getElementById('spinHistoryList');
+
+    if (spinHistoryUnsubscribe) spinHistoryUnsubscribe();
+
+    // ดึงข้อมูลเฉพาะของ User นี้ (ถอด orderBy ออกเพื่อเลี่ยง Index Error)
+    spinHistoryUnsubscribe = db.collection('spin_history')
+        .where('userId', '==', currentUser.uid)
+        .onSnapshot(snapshot => {
+            if (snapshot.empty) {
+                listContainer.innerHTML = '<li class="history-empty">ยังไม่มีประวัติการสุ่ม เริ่มหมุนตู้แรกเลย!</li>';
+                return;
+            }
+
+            // 1. นำข้อมูลมาเก็บใน Array ก่อน
+            let historyData = [];
+            snapshot.forEach(doc => historyData.push(doc.data()));
+            
+            // 2. ใช้ JavaScript เรียงลำดับจาก "ใหม่สุด" ไป "เก่าสุด"
+            historyData.sort((a, b) => {
+                const timeA = a.timestamp ? a.timestamp.toDate().getTime() : Date.now();
+                const timeB = b.timestamp ? b.timestamp.toDate().getTime() : Date.now();
+                return timeB - timeA;
+            });
+
+            // 3. ตัดเอาแค่ 10 รายการล่าสุดมาแสดงผล
+            historyData = historyData.slice(0, 10);
+
+            // 4. สร้าง UI แสดงผล
+            listContainer.innerHTML = ''; 
+            historyData.forEach(data => {
+                const dateStr = data.timestamp ? data.timestamp.toDate().toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' }) : 'เมื่อสักครู่';
+
+                listContainer.innerHTML += `
+                    <li class="spin-history-item">
+                        <div class="history-reward ${data.rewardType}">
+                            <i class="${data.icon}"></i> ${data.rewardName}
+                        </div>
+                        <div class="history-date">${dateStr}</div>
+                    </li>
+                `;
+            });
+        }, error => {
+            console.error("เกิดข้อผิดพลาดในการดึงประวัติ:", error);
+        });
+}
+
 async function startSpin() {
     if (!currentUser) return openLoginModal();
     if (isSpinning) return;
@@ -527,6 +595,15 @@ async function startSpin() {
             const newDoc = await userRef.get();
             updateGemDisplay(newDoc.data().gems); 
             
+            await db.collection('spin_history').add({
+                userId: currentUser.uid,
+                rewardName: winningReward.name,
+                rewardValue: winningReward.value,
+                rewardType: winningReward.type,
+                icon: winningReward.icon,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
             if (winningReward.type === 'legendary') {
                 alert(`👑 แจ็คพอตแตก!! ยินดีด้วยคุณได้รับ ${winningReward.name} Gem!`);
             } else if (winningReward.type === 'normal') {
@@ -629,6 +706,67 @@ function handleSlipUpload(event) {
     };
     // อ่านไฟล์ที่อัปโหลดมา
     reader.readAsDataURL(file);
+}
+
+// ตัวแปรสำหรับยกเลิกการดึงประวัติเติมเงิน
+let userTopupUnsubscribe = null;
+
+// ฟังก์ชันดึงประวัติการเติมเงินของผู้ใช้งาน
+function loadUserTopupHistory() {
+    if (!currentUser) return;
+    const container = document.getElementById('user-topup-history-list');
+    
+    // เคลียร์การเชื่อมต่อเก่าทิ้ง
+    if (userTopupUnsubscribe) userTopupUnsubscribe();
+
+    container.innerHTML = '<p class="history-empty"><i class="fas fa-spinner fa-spin"></i> กำลังโหลดข้อมูล...</p>';
+
+    // ดึงเฉพาะของ User นี้ (ไม่มี orderBy เพื่อเลี่ยงปัญหา Composite Index)
+    userTopupUnsubscribe = db.collection('topup_requests')
+        .where('userId', '==', currentUser.uid)
+        .onSnapshot(snapshot => {
+            if (snapshot.empty) {
+                container.innerHTML = '<p class="history-empty">คุณยังไม่เคยทำรายการเติมเงินครับ</p>';
+                return;
+            }
+
+            // 1. นำข้อมูลมาเก็บใน Array
+            let txData = [];
+            snapshot.forEach(doc => txData.push(doc.data()));
+
+            // 2. ใช้ JavaScript เรียงลำดับจาก "ใหม่สุด" ไป "เก่าสุด"
+            txData.sort((a, b) => {
+                const timeA = a.createdAt ? a.createdAt.toDate().getTime() : Date.now();
+                const timeB = b.createdAt ? b.createdAt.toDate().getTime() : Date.now();
+                return timeB - timeA;
+            });
+
+            // 3. สร้าง UI แสดงผล
+            container.innerHTML = '';
+            txData.forEach(data => {
+                const dateStr = data.createdAt ? data.createdAt.toDate().toLocaleString('th-TH') : 'กำลังดำเนินการ...';
+                
+                // เช็กสถานะเพื่อเปลี่ยนสี Badge และไอคอน
+                let statusConfig = { class: 'status-pending', icon: 'fa-clock', text: 'รอตรวจสอบ' };
+                if (data.status === 'approved') statusConfig = { class: 'status-approved', icon: 'fa-check-circle', text: 'อนุมัติสำเร็จ' };
+                else if (data.status === 'rejected') statusConfig = { class: 'status-rejected', icon: 'fa-times-circle', text: 'รายการถูกปฏิเสธ' };
+
+                container.innerHTML += `
+                    <div class="transaction-item">
+                        <div class="tx-info">
+                            <span class="tx-title">คำขอเติม ${data.gemsRequested} Gem</span>
+                            <span class="tx-date">ยอดชำระ: ฿${data.amountPaid} | ${dateStr}</span>
+                        </div>
+                        <div class="tx-status ${statusConfig.class}">
+                            <i class="fas ${statusConfig.icon}"></i> ${statusConfig.text}
+                        </div>
+                    </div>
+                `;
+            });
+        }, error => {
+            console.error("เกิดข้อผิดพลาดในการดึงประวัติเติมเงิน:", error);
+            container.innerHTML = '<p class="history-empty" style="color: #EF4444;">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
+        });
 }
 
 // ==========================================

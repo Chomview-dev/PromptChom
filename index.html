@@ -20,8 +20,8 @@
                 <a href="#" id="homeLink">หน้าแรก</a>
                 <a href="#" id="spinLink"><i class="fas fa-gift" style="color: #F59E0B;"></i> สุ่มรางวัล</a>
                 <a href="#" id="gemsLink"><i class="fas fa-user-circle"></i> โปรไฟล์ของฉัน</a>
-                
                 <a href="#" id="adminLink" style="display: none; color: #EF4444;"><i class="fas fa-shield-alt"></i> จัดการระบบ</a>
+                
                 
                 <div class="dropdown">
                     <a href="#" class="dropbtn">หมวดหมู่ <i class="fas fa-chevron-down dropdown-arrow"></i></a>
@@ -112,6 +112,18 @@
                 <div id="profile-favorites-grid" class="prompt-grid"></div>
             </div>
 
+            <!-- ==========================================
+                 กล่องประวัติการทำรายการเติมเงิน (Top-up History)
+            =========================================== -->
+            <div class="gem-info-card" style="max-width: 100%; padding: 32px 24px; margin-top: 24px;">
+                <h2 style="margin: 0 0 24px 0; color: #1E3A8A; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-file-invoice-dollar" style="color: #10B981;"></i> ประวัติการทำรายการ
+                </h2>
+                <div id="user-topup-history-list" class="transaction-list">
+                    <p class="history-empty"><i class="fas fa-spinner fa-spin"></i> กำลังโหลดข้อมูล...</p>
+                </div>
+            </div>
+
         </section>
 
         <section id="spin-page" style="display: none; padding: 40px 20px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box;">
@@ -137,6 +149,13 @@
                 <button id="btnSpin" class="btn-confirm" onclick="startSpin()" style="margin-top: 32px; font-size: 1.2rem; padding: 16px 40px; border-radius: 99px; background-color: #EA580C; border: none; color: white; cursor: pointer; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.4); transition: all 0.3s ease;">
                     <i class="fas fa-play"></i> เริ่มสุ่ม (20 Gem)
                 </button>
+                <!-- 👇 เพิ่มส่วนประวัติการสุ่มตรงนี้ 👇 -->
+                <div class="spin-history-container">
+                    <h3 class="spin-history-title"><i class="fas fa-history"></i> ประวัติการสุ่ม 10 ครั้งล่าสุด</h3>
+                    <ul id="spinHistoryList" class="spin-history-list">
+                        <li class="history-empty">ยังไม่มีประวัติการสุ่ม เริ่มหมุนตู้แรกเลย!</li>
+                    </ul>
+                </div>
             </div>
 
         </section>
