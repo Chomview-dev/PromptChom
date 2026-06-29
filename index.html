@@ -234,6 +234,67 @@
                 <div id="admin-topup-list" style="display: flex; flex-direction: column; gap: 16px;">
                     </div>
             </div>
+
+            <!-- ==========================================
+                 โซนจัดการ Prompt (Admin Only)
+            =========================================== -->
+            <div class="gem-info-card" style="margin-top: 32px;">
+                <h2 style="margin-top: 0; color: #9333EA;"><i class="fas fa-plus-circle"></i> เพิ่มคำสั่ง Prompt ใหม่เข้าสู่ระบบ</h2>
+                
+                <div class="contact-form-card" style="box-shadow: none; border: 1px solid #E2E8F0; padding: 24px; margin-top: 16px;">
+                    <form id="adminAddPromptForm" onsubmit="submitNewPrompt(event)">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="pTitle">ชื่อคำสั่ง (Title)</label>
+                                <input type="text" id="pTitle" required placeholder="เช่น แคปชั่นขายของ">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="pCategory">หมวดหมู่</label>
+                                <select id="pCategory" required>
+                                    <option value="marketing">การตลาด</option>
+                                    <option value="education">การเรียน</option>
+                                    <option value="coding">การเขียนโค้ด</option>
+                                    <option value="creative">งานสร้างสรรค์</option>
+                                    <option value="productivity">การทำงาน</option>
+                                    <option value="image-gen">สร้างภาพ AI</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group" style="margin-top: 16px;">
+                            <label for="pDesc">รายละเอียดสั้นๆ (Description - ใส่หรือไม่ใส่ก็ได้)</label>
+                            <input type="text" id="pDesc" placeholder="อธิบายประโยชน์ของคำสั่งนี้ให้ผู้อ่านเข้าใจ...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="pContent">เนื้อหาคำสั่ง (Prompt Content)</label>
+                            <textarea id="pContent" rows="4" required placeholder="พิมพ์ข้อความคำสั่ง Prompt ของคุณที่นี่..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="pImageUrl">ลิงก์รูปภาพตัวอย่าง (Image URL - ใส่หรือไม่ใส่ก็ได้)</label>
+                            <input type="text" id="pImageUrl" placeholder="https://images.unsplash.com/...">
+                        </div>
+                        
+                        <!-- โซนตั้งค่า Prompt พรีเมียม -->
+                        <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid #FCD34D; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                            <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #D97706; cursor: pointer; margin-bottom: 0;">
+                                <input type="checkbox" id="pIsPremium" onchange="document.getElementById('priceZone').style.display = this.checked ? 'block' : 'none'" style="width: 20px; height: 20px; accent-color: #F59E0B;">
+                                ตั้งเป็น "Prompt พรีเมียม" (ผู้ใช้ต้องจ่าย Gem เพื่อดู)
+                            </label>
+                            
+                            <div id="priceZone" class="form-group" style="display: none; margin-top: 12px; margin-bottom: 0;">
+                                <label for="pPrice" style="color: #B45309;">ราคาปลดล็อก (Gem)</label>
+                                <input type="number" id="pPrice" placeholder="เช่น 50" min="1" style="border-color: #FCD34D;">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-confirm" style="width: 100%; padding: 14px; font-size: 1.1rem; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                            <i class="fas fa-cloud-upload-alt"></i> เผยแพร่ Prompt สู่หน้าเว็บ
+                        </button>
+                    </form>
+                </div>
+            </div>
         </section>
 
         <div class="prompt-grid" id="prompt-container">
