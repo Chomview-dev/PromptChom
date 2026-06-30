@@ -922,6 +922,68 @@ async function submitNewPrompt(event) {
     }
 }
 
+// ==========================================
+// ระบบหลังบ้าน: ฟังก์ชันเพิ่ม Prompt ใหม่โดย Admin
+// ==========================================
+async function submitNewPrompt(event) {
+    event.preventDefault();
+
+    // ดึงค่าจากฟอร์ม
+    const title = document.getElementById('pTitle').value;
+    const categoryId = document.getElementById('pCategory').value;
+    const content = document.getElementById('pContent').value;
+    const isPremium = document.getElementById('pIsPremium').checked;
+    const unlockPrice = parseInt(document.getElementById('pPrice').value) || 0;
+
+    // Data Dictionary: กำหนดสี Badge และชื่อหมวดหมู่ให้สอดคล้องกับ UI
+    const categoryData = {
+        'marketing': { name: 'การตลาด', badge: 'badge-marketing' },
+        'education': { name: 'การเรียน', badge: 'badge-education' },
+        'coding': { name: 'การเขียนโค้ด', badge: 'badge-coding' },
+        'creative': { name: 'งานสร้างสรรค์', badge: 'badge-creative' },
+        'productivity': { name: 'การทำงาน', badge: 'badge-productivity' },
+        'image-gen': { name: 'สร้างภาพ AI', badge: 'badge-creative' }
+    };
+
+    // เปลี่ยนสถานะปุ่มตอนกำลังโหลด
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึกข้อมูล...';
+    submitBtn.disabled = true;
+
+    try {
+        // สร้างแพ็กเกจข้อมูลใหม่
+        const newPrompt = {
+            title: title,
+            categoryId: categoryId,
+            categoryName: categoryData[categoryId].name,
+            badgeColor: categoryData[categoryId].badge,
+            content: content,
+            isPremium: isPremium,
+            unlockPrice: isPremium ? unlockPrice : 0,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        // โยนขึ้น Cloud (ใช้ .add() เพื่อให้ Firebase สร้าง ID ให้กล่องนี้แบบสุ่มอัตโนมัติ)
+        await db.collection('prompts').add(newPrompt);
+
+        // แจ้งเตือนและล้างค่าในฟอร์ม
+        showToast("✅ เพิ่ม Prompt ใหม่เข้าสู่ระบบเรียบร้อยแล้ว!");
+        event.target.reset();
+        document.getElementById('priceDiv').style.display = 'none';
+
+        // หน้าเว็บจะอัปเดตการ์ดใหม่ให้เห็นทันที เพราะเราใช้ onSnapshot ไว้แล้ว!
+
+    } catch (error) {
+        console.error("Error adding prompt:", error);
+        alert("❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง");
+    } finally {
+        // คืนค่าปุ่มกลับมาเหมือนเดิม
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+}
+
 // เรียกใช้งานฟังก์ชันเริ่มต้น
 initAuth();
 initTheme();
