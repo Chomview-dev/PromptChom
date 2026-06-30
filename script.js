@@ -913,25 +913,71 @@ async function submitNewPrompt(event) {
 }
 
 // ==========================================
-// ส่วนที่ 13: ระบบ Community (แชร์ Prompt จากผู้ใช้งาน)
+// ส่วนที่ 13: ระบบ Community (สร้างโพสต์เหมือน Facebook)
 // ==========================================
+let pendingPostImageBase64 = null; // ตัวแปรเก็บภาพที่ผู้ใช้อัปโหลด
+
 function openShareModal() {
     if (!currentUser) return openLoginModal(); 
     document.getElementById('sharePromptModal').classList.add('show');
+    removePostImage(); // เคลียร์ภาพเก่าทิ้งทุกครั้งที่เปิด
 }
 
 function closeShareModal() {
     document.getElementById('sharePromptModal').classList.remove('show');
     document.getElementById('userShareForm').reset();
+    removePostImage();
 }
 
+// 📸 ฟังก์ชันบีบอัดภาพและโชว์พรีวิว
+function handlePostImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            // บีบอัดภาพด้วย Canvas (ขนาดกว้างสุด 800px)
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 800;
+            let scaleSize = 1;
+            if (img.width > MAX_WIDTH) scaleSize = MAX_WIDTH / img.width;
+            
+            canvas.width = img.width * scaleSize;
+            canvas.height = img.height * scaleSize;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // เก็บ Base64 ไว้ในตัวแปร และโชว์รูปพรีวิว
+            pendingPostImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
+            
+            document.getElementById('postImagePreview').src = pendingPostImageBase64;
+            document.getElementById('postImagePreviewContainer').style.display = 'block';
+            document.getElementById('postUploadZone').style.display = 'none';
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+// 🗑️ ฟังก์ชันลบรูปที่เลือก
+function removePostImage() {
+    pendingPostImageBase64 = null;
+    document.getElementById('postImagePreview').src = '';
+    document.getElementById('postImagePreviewContainer').style.display = 'none';
+    document.getElementById('postUploadZone').style.display = 'block';
+    document.getElementById('postImageInput').value = '';
+}
+
+// 🚀 ฟังก์ชันเผยแพร่โพสต์ขึ้นหน้าเว็บ
 async function submitCommunityPrompt(event) {
     event.preventDefault();
     if (!currentUser) return;
 
     const btn = event.target.querySelector('button[type="submit"]');
     const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังส่ง...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังอัปโหลด...';
     btn.disabled = true;
 
     try {
@@ -948,9 +994,15 @@ async function submitCommunityPrompt(event) {
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
+        // ถ้ามีรูปที่อัปโหลด ให้แนบ url (Base64) ไปด้วย
+        if (pendingPostImageBase64) {
+            newPrompt.imageUrl = pendingPostImageBase64;
+        }
+
+        // โยนขึ้น Firebase
         await db.collection('prompts').add(newPrompt);
 
-        // แจกรางวัล 10 Gem ให้คนแชร์ตอนโพสต์สำเร็จ
+        // ให้โบนัส 10 Gem
         await db.collection('users').doc(currentUser.uid).update({ 
             gems: firebase.firestore.FieldValue.increment(10) 
         });
@@ -958,12 +1010,12 @@ async function submitCommunityPrompt(event) {
         const userDoc = await db.collection('users').doc(currentUser.uid).get();
         updateGemDisplay(userDoc.data().gems);
 
-        showToast("🎉 แชร์สำเร็จ! คุณได้รับ 10 Gem");
+        showToast("🎉 โพสต์สำเร็จ! คุณได้รับ 10 Gem");
         closeShareModal();
 
     } catch (error) {
         console.error("Error sharing prompt:", error);
-        alert("❌ เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+        alert("❌ เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง (ถ้ารูปใหญ่ไปอาจส่งไม่ผ่านครับ)");
     } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;

@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Prompt Directory | PromptChom</title>
-    <link rel="stylesheet" href="style.css?v=1004">
+    <!-- อย่าลืมเช็กไฟล์ style.css ให้เป็นเวอร์ชันล่าสุด -->
+    <link rel="stylesheet" href="style.css?v=1005">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
 </head>
@@ -91,77 +92,78 @@
             <a href="https://gemini.google.com/" target="_blank" class="ai-link btn-gemini"><i class="fas fa-magic"></i> Gemini</a>
             <a href="https://claude.ai/" target="_blank" class="ai-link btn-claude"><i class="fas fa-brain"></i> Claude</a>
             
-            <!-- ปุ่มแชร์ Prompt (Community) -->
-            <div style="width: 100%; text-align: center; margin-top: 16px;">
-                <button onclick="openShareModal()" class="btn-glass-large" style="padding: 10px 24px; font-size: 0.95rem; background: rgba(16, 185, 129, 0.1); border-color: #10B981; color: #10B981;">
-                    <i class="fas fa-share-square"></i> แบ่งปัน Prompt ของคุณ (+10 Gem)
+            <!-- ปุ่มสร้างโพสต์ Prompt ของผู้ใช้ (Facebook Style) -->
+            <div style="width: 100%; text-align: center; margin-top: 24px;">
+                <button onclick="openShareModal()" class="btn-glass-large" style="padding: 12px 32px; font-size: 1.05rem; background: rgba(59, 130, 246, 0.15); border-color: #3B82F6; color: #60A5FA; font-weight: 700;">
+                    <i class="fas fa-edit"></i> สร้างโพสต์ Prompt ของคุณ (+10 Gem)
                 </button>
             </div>
         </div>
 
         <!-- ==========================================
-             PAGE: โปรไฟล์ของฉัน (Gems Page)
+             PAGE: โปรไฟล์ & Creator Dashboard
         =========================================== -->
-        <section id="gems-page" style="display: none;">
+        <section id="gems-page" style="display: none; width: 100%; max-width: 1200px; margin: 0 auto; padding-top: 20px;">
             
-            <!-- ป้ายแบนเนอร์โปรไฟล์ -->
-            <div class="hero-banner gems-banner" style="padding: 40px 24px; text-align: left; display: flex; align-items: center; gap: 24px; background: linear-gradient(135deg, #3B82F6 0%, #9333EA 100%); border-radius: 12px; margin-bottom: 24px;">
-                <div id="profileAvatarBig" style="width: 80px; height: 80px; min-width: 80px; background: rgba(255,255,255,0.2); border: 4px solid #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; overflow: hidden;">👤</div>
-                <div>
-                    <span class="badge badge-creative" style="background: rgba(255,255,255,0.2); color: #fff; margin-bottom: 8px;">สมาชิก PromptChom</span>
-                    <h1 id="profileNameBig" style="font-size: 2rem; margin: 0; color: #fff;">กรุณาล็อกอิน</h1>
-                    <p id="profileEmailBig" style="margin: 4px 0 0 0; opacity: 0.9; font-size: 1rem; color: #E2E8F0;">-</p>
-                </div>
-            </div>
-
-            <!-- กล่องสรุปยอด Gem -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 32px;">
-                <div class="gem-info-card" style="margin-bottom: 0; display: flex; align-items: center; gap: 20px;">
-                    <div style="width: 60px; height: 60px; background: #DBEAFE; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-gem" style="font-size: 2rem; color: #3B82F6;"></i>
+            <div class="dashboard-grid">
+                <!-- คอลัมน์ซ้าย: ข้อมูลบัญชี -->
+                <div class="dashboard-sidebar">
+                    <div class="dashboard-card profile-card" style="text-align: center;">
+                        <div id="profileAvatarBig" class="profile-avatar-pro">👤</div>
+                        <h2 id="profileNameBig" style="margin: 16px 0 4px 0; color: #F8FAFC;">กรุณาล็อกอิน</h2>
+                        <p id="profileEmailBig" style="margin: 0 0 16px 0; color: #94A3B8; font-size: 0.9rem;">-</p>
+                        <span class="badge" style="background: rgba(147, 51, 234, 0.2); color: #C084FC; border: 1px solid #9333EA;">Prompt Creator</span>
                     </div>
-                    <div>
-                        <h3 style="margin: 0 0 4px 0; color: #64748B; font-size: 1rem;">Gem ของฉัน</h3>
-                        <div id="gemCountDisplay" style="font-size: 1.8rem; font-weight: 800; color: #1E3A8A;">0</div>
+
+                    <!-- เมนูนำทางย่อยในโปรไฟล์ -->
+                    <div class="dashboard-card nav-card" style="padding: 12px; margin-top: 24px;">
+                        <button class="dash-nav-btn active"><i class="fas fa-wallet"></i> กระเป๋าเงิน (Wallet)</button>
+                        <button class="dash-nav-btn" onclick="document.getElementById('homeLink').click()"><i class="fas fa-heart"></i> ดูรายการโปรด</button>
                     </div>
                 </div>
 
-                <div class="gem-info-card" style="margin-bottom: 0;">
-                    <h3 style="margin: 0 0 8px 0; color: #1E3A8A;"><i class="fas fa-info-circle"></i> Gem คืออะไร?</h3>
-                    <p style="font-size: 0.9rem; margin: 0; color: #64748B;">แต้มพิเศษสำหรับปลดล็อกพรีเมียม รับฟรี <b>+50 Gem</b> จากการใช้งานครั้งแรก!</p>
+                <!-- คอลัมน์ขวา: สถิติ และการทำรายการ -->
+                <div class="dashboard-main">
+                    
+                    <!-- โซนตัวเลขสถิติ (Stat Cards) -->
+                    <div class="stats-grid">
+                        <div class="dashboard-card stat-card" style="border-top: 4px solid #3B82F6;">
+                            <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: #3B82F6;"><i class="fas fa-gem"></i></div>
+                            <div class="stat-info">
+                                <p>Gem คงเหลือ</p>
+                                <h3 id="gemCountDisplay">0</h3>
+                            </div>
+                        </div>
+
+                        <!-- กล่องรับรางวัลสำหรับ Creator -->
+                        <div id="rewardBoxContainer" class="dashboard-card stat-card" style="display: none; border-top: 4px solid #F59E0B; background: linear-gradient(to bottom right, rgba(245, 158, 11, 0.1), transparent);">
+                            <div class="stat-icon" style="background: rgba(245, 158, 11, 0.2); color: #F59E0B;"><i class="fas fa-gift reward-bounce"></i></div>
+                            <div class="stat-info">
+                                <p style="color: #FCD34D;">ส่วนแบ่งรายได้รอรับ</p>
+                                <h3 id="pendingGemsCount" style="color: #F59E0B;">0</h3>
+                            </div>
+                            <button onclick="claimCreatorRewards()" class="btn-claim-micro">รับ Gem ทันที</button>
+                        </div>
+                    </div>
+
+                    <!-- โซนรายการโปรด (ดึงมาโชว์ใน Dashboard) -->
+                    <div class="dashboard-card" style="margin-top: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 style="margin: 0; color: #F8FAFC;"><i class="fas fa-heart" style="color: #EF4444;"></i> Prompt โปรดของฉัน</h3>
+                        </div>
+                        <div id="profile-favorites-grid" class="prompt-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));"></div>
+                    </div>
+
+                    <!-- โซนประวัติการเติมเงิน -->
+                    <div class="dashboard-card" style="margin-top: 24px;">
+                        <h3 style="margin: 0 0 20px 0; color: #F8FAFC;"><i class="fas fa-file-invoice-dollar" style="color: #10B981;"></i> ประวัติการทำรายการ (Transactions)</h3>
+                        <div id="user-topup-history-list" class="transaction-list" style="max-height: 250px;">
+                            <p class="history-empty"><i class="fas fa-spinner fa-spin"></i> กำลังโหลดข้อมูล...</p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-
-            <!-- กล่องรับรางวัล (Creator Economy) จะแสดงเฉพาะตอนมีคนคัดลอก -->
-            <div id="rewardBoxContainer" class="gem-info-card" style="display: none; background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; text-align: center; border: none; box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4); margin-bottom: 32px; position: relative; overflow: hidden;">
-                <div style="position: absolute; top: -50px; left: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.2); filter: blur(40px); border-radius: 50%;"></div>
-                <i class="fas fa-gift reward-bounce" style="font-size: 3.5rem; margin-bottom: 16px; color: #FEF3C7; text-shadow: 0 4px 10px rgba(0,0,0,0.2);"></i>
-                <h2 style="margin: 0 0 8px 0; color: white; font-size: 1.8rem;">🎉 มีส่วนแบ่ง Gem รอคุณอยู่!</h2>
-                <p style="margin: 0 0 24px 0; opacity: 0.95; font-size: 1.1rem;">มีผู้ใช้งานคัดลอก Prompt ของคุณ คุณได้รับรางวัล <b id="pendingGemsCount" style="font-size: 1.4rem; color: #FEF3C7;">0</b> Gem</p>
-                
-                <button onclick="claimCreatorRewards()" class="btn-glass" style="background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.6); font-size: 1.1rem; padding: 14px 40px; font-weight: 700; color: white; cursor: pointer;">
-                    <i class="fas fa-hand-holding-usd"></i> กดรับ Gem เข้ากระเป๋าเลย!
-                </button>
-            </div>
-
-            <!-- รายการโปรด -->
-            <div class="gem-info-card" style="max-width: 100%; padding: 32px 24px;">
-                <h2 style="margin: 0 0 24px 0; color: #1E3A8A; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-heart" style="color: #EF4444;"></i> Prompt โปรดของฉัน
-                </h2>
-                <div id="profile-favorites-grid" class="prompt-grid"></div>
-            </div>
-
-            <!-- ประวัติทำรายการ -->
-            <div class="gem-info-card" style="max-width: 100%; padding: 32px 24px; margin-top: 24px;">
-                <h2 style="margin: 0 0 24px 0; color: #1E3A8A; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-file-invoice-dollar" style="color: #10B981;"></i> ประวัติการทำรายการ
-                </h2>
-                <div id="user-topup-history-list" class="transaction-list">
-                    <p class="history-empty"><i class="fas fa-spinner fa-spin"></i> กำลังโหลดข้อมูล...</p>
-                </div>
-            </div>
-
         </section>
 
         <!-- ==========================================
@@ -432,27 +434,40 @@
         </div>
     </div>
 
-    <!-- 4. Modal แชร์ Prompt (Community Share) -->
+    <!-- 4. Modal สร้างโพสต์ (Facebook Style) -->
     <div id="sharePromptModal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 500px; text-align: left;">
-            <h2 style="color: #1E3A8A; margin-top: 0;"><i class="fas fa-lightbulb" style="color: #F59E0B;"></i> แบ่งปัน Prompt ของคุณ</h2>
-            <p style="color: #64748B; font-size: 0.9rem; margin-bottom: 20px;">แชร์คำสั่งเด็ดๆ ของคุณให้เพื่อนๆ และรับฟรี 10 Gem ทันที!</p>
+        <div class="modal-content" style="max-width: 550px; text-align: left; padding: 32px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px;">
+                <h2 style="color: #60A5FA; margin: 0; font-size: 1.4rem;"><i class="fas fa-pen-fancy"></i> สร้างโพสต์ใหม่</h2>
+                <button onclick="closeShareModal()" style="background: none; border: none; font-size: 1.5rem; color: #94A3B8; cursor: pointer;">&times;</button>
+            </div>
 
             <form id="userShareForm" onsubmit="submitCommunityPrompt(event)">
                 <div class="form-group">
-                    <label>ชื่อคำสั่ง (Title)</label>
-                    <input type="text" id="shareTitle" required placeholder="เช่น ให้ AI ช่วยแต่งกลอนแปด">
+                    <input type="text" id="shareTitle" required placeholder="หัวข้อ Prompt ของคุณ (เช่น ให้ AI ช่วยแต่งกลอน)" style="font-size: 1.1rem; font-weight: 600; border: none; background: transparent; border-bottom: 1px solid #334155; border-radius: 0; padding-left: 0;">
                 </div>
+                
                 <div class="form-group">
-                    <label>เนื้อหาคำสั่ง (Prompt)</label>
-                    <textarea id="shareContent" rows="4" required placeholder="วางคำสั่งของคุณที่นี่..."></textarea>
+                    <textarea id="shareContent" rows="4" required placeholder="คุณกำลังคิดคำสั่งอะไรอยู่? วาง Prompt ของคุณที่นี่..." style="border: none; background: transparent; resize: none; font-size: 1rem; padding-left: 0; box-shadow: none;"></textarea>
                 </div>
-                <div class="modal-actions" style="margin-top: 24px;">
-                    <button type="button" onclick="closeShareModal()" class="btn-cancel">ยกเลิก</button>
-                    <button type="submit" class="btn-confirm" style="background: #10B981;">
-                        <i class="fas fa-paper-plane"></i> เผยแพร่ทันที
-                    </button>
+
+                <!-- โซนอัปโหลดรูปภาพ -->
+                <div style="margin-bottom: 20px;">
+                    <div id="postImagePreviewContainer" style="display: none; position: relative; margin-bottom: 16px;">
+                        <img id="postImagePreview" src="" style="width: 100%; max-height: 250px; object-fit: cover; border-radius: 12px; border: 1px solid #334155;">
+                        <button type="button" onclick="removePostImage()" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;"><i class="fas fa-times"></i></button>
+                    </div>
+                    
+                    <div class="upload-zone" id="postUploadZone" onclick="document.getElementById('postImageInput').click()" style="padding: 16px; border: 2px dashed #475569; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.2s; background: rgba(15, 23, 42, 0.4);">
+                        <i class="fas fa-image" style="font-size: 1.5rem; color: #10B981; margin-bottom: 8px;"></i>
+                        <p style="margin: 0; color: #94A3B8; font-size: 0.9rem;">คลิกเพื่อเพิ่มรูปภาพ (ไม่บังคับ)</p>
+                        <input type="file" id="postImageInput" accept="image/*" style="display: none;" onchange="handlePostImage(event)">
+                    </div>
                 </div>
+
+                <button type="submit" class="btn-confirm" style="width: 100%; background: #3B82F6; font-size: 1.1rem; padding: 12px; border-radius: 8px;">
+                    โพสต์ (+10 Gem)
+                </button>
             </form>
         </div>
     </div>
