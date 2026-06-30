@@ -3,28 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Prompt Directory</title>
-    <link rel="stylesheet" href="style.css?v=1002">
+    <title>AI Prompt Directory | PromptChom</title>
+    <link rel="stylesheet" href="style.css?v=1004">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
 </head>
 <body class="dark-mode">
 
-    <header class="site-header">
-        <div class="header-container">
-            <a href="#" class="logo">
-                <i class="fas fa-sparkles" style="color: #A855F7;"></i> PromptChom
-            </a>
+    <!-- ==========================================
+         1. HEADER (ดีไซน์กระจกโปร่งแสง Cinematic)
+    =========================================== -->
+    <header class="cinematic-header">
+        <div class="header-container-new">
+            <!-- Logo ฝั่งซ้าย -->
+            <a href="#" class="logo-serif">PromptChom<span class="registered">®</span></a>
             
-            <nav class="nav-links">
-                <a href="#" id="homeLink">หน้าแรก</a>
-                <a href="#" id="spinLink"><i class="fas fa-gift" style="color: #F59E0B;"></i> สุ่มรางวัล</a>
-                <a href="#" id="gemsLink"><i class="fas fa-user-circle"></i> โปรไฟล์ของฉัน</a>
-                <a href="#" id="adminLink" style="display: none; color: #EF4444;"><i class="fas fa-shield-alt"></i> จัดการระบบ</a>
-                
-                
+            <!-- Navigation ตรงกลาง -->
+            <nav class="center-nav">
+                <a href="#" id="homeLink" class="active">หน้าแรก</a>
+                <a href="#" id="spinLink">สุ่มรางวัล</a>
+                <a href="#" id="gemsLink">โปรไฟล์</a>
                 <div class="dropdown">
-                    <a href="#" class="dropbtn">หมวดหมู่ <i class="fas fa-chevron-down dropdown-arrow"></i></a>
+                    <a href="#" class="dropbtn">หมวดหมู่ <i class="fas fa-chevron-down" style="font-size: 10px;"></i></a>
                     <div class="dropdown-content">
                         <a href="#" class="btn-filter active" onclick="filterCategory('all', this); return false;"><i class="fas fa-grid-2"></i> ทั้งหมด</a>
                         <a href="#" class="btn-filter" onclick="filterCategory('favorites', this); return false;"><i class="fas fa-heart" style="color: #EF4444;"></i> รายการโปรด</a>
@@ -36,36 +36,51 @@
                         <a href="#" class="btn-filter" onclick="filterCategory('productivity', this); return false;"><i class="fas fa-briefcase"></i> การทำงาน</a>
                     </div>
                 </div>
-                
                 <a href="#" id="contactLink">ติดต่อเรา</a>
-                
-                <div id="headerGemContainer" class="header-gem-pill" style="display: none;" onclick="openTopupModal()">
-                    <i class="fas fa-gem" style="color: #3B82F6;"></i>
-                    <span id="headerGemCount">0</span>
-                    <div class="plus-btn"><i class="fas fa-plus"></i></div>
+                <a href="#" id="adminLink" style="display: none; color: #EF4444; margin-left: 24px;"><i class="fas fa-shield-alt"></i> จัดการระบบ</a>
+            </nav>
+            
+            <!-- Actions ฝั่งขวา (ปุ่ม Login / แคปซูล Gem / สลับธีม) -->
+            <div class="right-actions" style="display: flex; align-items: center; gap: 12px;">
+                <div id="headerGemContainer" class="btn-glass" style="display: none; cursor: pointer; padding: 8px 16px; align-items: center; gap: 6px;" onclick="openTopupModal()">
+                    <i class="fas fa-gem" style="color: #60A5FA;"></i>
+                    <span id="headerGemCount" style="font-weight: 700;">0</span>
                 </div>
                 
-                <a href="#" id="loginBtn" class="btn-login" onclick="openLoginModal(); return false;">
-                    <i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ
+                <a href="#" id="loginBtn" class="btn-glass" onclick="openLoginModal(); return false;">
+                    เข้าสู่ระบบ
                 </a>
                 
-                <span id="userProfile" class="user-profile" style="display: none;">
-                    <i class="fas fa-user-circle"></i> <span id="displayUsername">User</span>
-                    <a href="#" onclick="logoutUser(); return false;" class="btn-logout" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i></a>
+                <span id="userProfile" class="user-profile" style="display: none; color: #FFFFFF;">
+                    <!-- JS จะดึงรูปและชื่อมาใส่ตรงนี้ -->
                 </span>
 
-                <button id="themeToggle" class="btn-theme"></button>
-            </nav>
+                <button id="themeToggle" class="btn-glass" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0;"></button>
+            </div>
         </div>
     </header>
 
-    <section class="hero-banner">
-        <h1>AI Prompt Directory</h1>
-        <p>คลังคำสั่ง AI คัดมาแล้วว่าปัง แค่ก๊อปปี้ก็เอาไปใช้งานได้เลย!</p>
+    <!-- ==========================================
+         2. HERO SECTION (ภาพพื้นหลังเต็มจอ)
+    =========================================== -->
+    <section class="cinematic-hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title-serif">Where prompts rise through the silence.</h1>
+            <p class="hero-subtitle">
+                เราออกแบบเครื่องมือสำหรับนักคิดผู้ลึกซึ้ง นักสร้างสรรค์ผู้กล้าหาญ 
+                ท่ามกลางความวุ่นวาย เราสร้างพื้นที่ดิจิทัลเพื่อความมุ่งมั่นและแรงบันดาลใจ
+            </p>
+            <a href="#prompt-container" class="btn-glass-large">เริ่มต้นใช้งาน (Begin Journey)</a>
+        </div>
     </section>
 
+    <!-- ==========================================
+         3. MAIN CONTENT (พื้นที่หลักของเว็บไซต์)
+    =========================================== -->
     <main class="main-content">
         
+        <!-- ระบบค้นหา และปุ่มลัด AI -->
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="🔍 ค้นหาคำสั่ง เช่น 'แคปชั่น', 'สรุป'..." onkeyup="searchPrompts()">
         </div>
@@ -75,10 +90,21 @@
             <a href="https://chatgpt.com/" target="_blank" class="ai-link btn-chatgpt"><i class="fas fa-robot"></i> ChatGPT</a>
             <a href="https://gemini.google.com/" target="_blank" class="ai-link btn-gemini"><i class="fas fa-magic"></i> Gemini</a>
             <a href="https://claude.ai/" target="_blank" class="ai-link btn-claude"><i class="fas fa-brain"></i> Claude</a>
+            
+            <!-- ปุ่มแชร์ Prompt (Community) -->
+            <div style="width: 100%; text-align: center; margin-top: 16px;">
+                <button onclick="openShareModal()" class="btn-glass-large" style="padding: 10px 24px; font-size: 0.95rem; background: rgba(16, 185, 129, 0.1); border-color: #10B981; color: #10B981;">
+                    <i class="fas fa-share-square"></i> แบ่งปัน Prompt ของคุณ (+10 Gem)
+                </button>
+            </div>
         </div>
 
+        <!-- ==========================================
+             PAGE: โปรไฟล์ของฉัน (Gems Page)
+        =========================================== -->
         <section id="gems-page" style="display: none;">
             
+            <!-- ป้ายแบนเนอร์โปรไฟล์ -->
             <div class="hero-banner gems-banner" style="padding: 40px 24px; text-align: left; display: flex; align-items: center; gap: 24px; background: linear-gradient(135deg, #3B82F6 0%, #9333EA 100%); border-radius: 12px; margin-bottom: 24px;">
                 <div id="profileAvatarBig" style="width: 80px; height: 80px; min-width: 80px; background: rgba(255,255,255,0.2); border: 4px solid #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; overflow: hidden;">👤</div>
                 <div>
@@ -88,6 +114,7 @@
                 </div>
             </div>
 
+            <!-- กล่องสรุปยอด Gem -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 32px;">
                 <div class="gem-info-card" style="margin-bottom: 0; display: flex; align-items: center; gap: 20px;">
                     <div style="width: 60px; height: 60px; background: #DBEAFE; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
@@ -101,10 +128,23 @@
 
                 <div class="gem-info-card" style="margin-bottom: 0;">
                     <h3 style="margin: 0 0 8px 0; color: #1E3A8A;"><i class="fas fa-info-circle"></i> Gem คืออะไร?</h3>
-                    <p style="font-size: 0.9rem; margin: 0; color: #64748B;">แต้มสะสมพิเศษสำหรับปลดล็อก Prompt ระดับพรีเมียม คุณจะได้รับ <b style="color: #9333EA;">+5 Gem</b> อัตโนมัติทุกครั้งที่กดคัดลอกคำสั่งไปใช้งาน!</p>
+                    <p style="font-size: 0.9rem; margin: 0; color: #64748B;">แต้มพิเศษสำหรับปลดล็อกพรีเมียม รับฟรี <b>+50 Gem</b> จากการใช้งานครั้งแรก!</p>
                 </div>
             </div>
 
+            <!-- กล่องรับรางวัล (Creator Economy) จะแสดงเฉพาะตอนมีคนคัดลอก -->
+            <div id="rewardBoxContainer" class="gem-info-card" style="display: none; background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; text-align: center; border: none; box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4); margin-bottom: 32px; position: relative; overflow: hidden;">
+                <div style="position: absolute; top: -50px; left: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.2); filter: blur(40px); border-radius: 50%;"></div>
+                <i class="fas fa-gift reward-bounce" style="font-size: 3.5rem; margin-bottom: 16px; color: #FEF3C7; text-shadow: 0 4px 10px rgba(0,0,0,0.2);"></i>
+                <h2 style="margin: 0 0 8px 0; color: white; font-size: 1.8rem;">🎉 มีส่วนแบ่ง Gem รอคุณอยู่!</h2>
+                <p style="margin: 0 0 24px 0; opacity: 0.95; font-size: 1.1rem;">มีผู้ใช้งานคัดลอก Prompt ของคุณ คุณได้รับรางวัล <b id="pendingGemsCount" style="font-size: 1.4rem; color: #FEF3C7;">0</b> Gem</p>
+                
+                <button onclick="claimCreatorRewards()" class="btn-glass" style="background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.6); font-size: 1.1rem; padding: 14px 40px; font-weight: 700; color: white; cursor: pointer;">
+                    <i class="fas fa-hand-holding-usd"></i> กดรับ Gem เข้ากระเป๋าเลย!
+                </button>
+            </div>
+
+            <!-- รายการโปรด -->
             <div class="gem-info-card" style="max-width: 100%; padding: 32px 24px;">
                 <h2 style="margin: 0 0 24px 0; color: #1E3A8A; display: flex; align-items: center; gap: 10px;">
                     <i class="fas fa-heart" style="color: #EF4444;"></i> Prompt โปรดของฉัน
@@ -112,9 +152,7 @@
                 <div id="profile-favorites-grid" class="prompt-grid"></div>
             </div>
 
-            <!-- ==========================================
-                 กล่องประวัติการทำรายการเติมเงิน (Top-up History)
-            =========================================== -->
+            <!-- ประวัติทำรายการ -->
             <div class="gem-info-card" style="max-width: 100%; padding: 32px 24px; margin-top: 24px;">
                 <h2 style="margin: 0 0 24px 0; color: #1E3A8A; display: flex; align-items: center; gap: 10px;">
                     <i class="fas fa-file-invoice-dollar" style="color: #10B981;"></i> ประวัติการทำรายการ
@@ -126,6 +164,9 @@
 
         </section>
 
+        <!-- ==========================================
+             PAGE: สุ่มรางวัล (Lucky Spin)
+        =========================================== -->
         <section id="spin-page" style="display: none; padding: 40px 20px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box;">
             
             <div class="hero-banner gems-banner" style="background: linear-gradient(135deg, #F59E0B 0%, #EA580C 100%); margin-bottom: 32px; border-radius: 12px; text-align: center; padding: 40px 32px;">
@@ -135,6 +176,7 @@
             </div>
 
             <div class="gem-info-card" style="text-align: center; overflow: hidden; position: relative; padding: 40px 20px;">
+                <!-- รางวงล้อ -->
                 <div class="roulette-window">
                     <div class="roulette-pointer"><i class="fas fa-caret-down"></i></div>
                     <div class="roulette-track" id="rouletteTrack">
@@ -149,7 +191,8 @@
                 <button id="btnSpin" class="btn-confirm" onclick="startSpin()" style="margin-top: 32px; font-size: 1.2rem; padding: 16px 40px; border-radius: 99px; background-color: #EA580C; border: none; color: white; cursor: pointer; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.4); transition: all 0.3s ease;">
                     <i class="fas fa-play"></i> เริ่มสุ่ม (20 Gem)
                 </button>
-                <!-- 👇 เพิ่มส่วนประวัติการสุ่มตรงนี้ 👇 -->
+                
+                <!-- ประวัติสุ่ม -->
                 <div class="spin-history-container">
                     <h3 class="spin-history-title"><i class="fas fa-history"></i> ประวัติการสุ่ม 10 ครั้งล่าสุด</h3>
                     <ul id="spinHistoryList" class="spin-history-list">
@@ -160,6 +203,9 @@
 
         </section>
 
+        <!-- ==========================================
+             PAGE: ติดต่อเรา (Contact Center)
+        =========================================== -->
         <section id="contact-page" style="display: none; padding: 40px 20px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box;">
             
             <div class="hero-banner gems-banner" style="background: linear-gradient(135deg, #0F766E 0%, #0369A1 100%); margin-bottom: 32px; border-radius: 12px; text-align: left; padding: 40px 32px;">
@@ -222,22 +268,23 @@
             </div>
         </section>
 
+        <!-- ==========================================
+             PAGE: จัดการระบบ (Admin Area)
+        =========================================== -->
         <section id="admin-page" style="display: none; width: 100%; max-width: 1200px; margin: 0 auto;">
             <div class="hero-banner gems-banner" style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); margin-bottom: 32px; border-radius: 12px; text-align: left; padding: 32px;">
                 <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #FCA5A5; margin-bottom: 8px;">Admin Area</span>
-                <h1 style="color: #fff; font-size: 2rem; margin: 0;"><i class="fas fa-tasks"></i> ระบบจัดการรายการเติมเงิน</h1>
-                <p style="color: #94A3B8; margin: 8px 0 0 0;">ตรวจสอบสลิปและอนุมัติ Gem ให้ผู้ใช้งาน</p>
+                <h1 style="color: #fff; font-size: 2rem; margin: 0;"><i class="fas fa-tasks"></i> ระบบจัดการส่วนกลาง</h1>
+                <p style="color: #94A3B8; margin: 8px 0 0 0;">ตรวจสอบสลิปและเพิ่มเนื้อหาเข้าสู่ระบบ</p>
             </div>
 
+            <!-- กล่องอนุมัติสลิป -->
             <div class="gem-info-card">
                 <h2 style="margin-top: 0; color: #1E3A8A;"><i class="fas fa-clock"></i> รายการรอตรวจสอบ (Pending)</h2>
-                <div id="admin-topup-list" style="display: flex; flex-direction: column; gap: 16px;">
-                    </div>
+                <div id="admin-topup-list" style="display: flex; flex-direction: column; gap: 16px;"></div>
             </div>
 
-            <!-- ==========================================
-                 โซนจัดการ Prompt (Admin Only)
-            =========================================== -->
+            <!-- โซนเพิ่ม Prompt ใหม่ (CMS) -->
             <div class="gem-info-card" style="margin-top: 32px;">
                 <h2 style="margin-top: 0; color: #9333EA;"><i class="fas fa-plus-circle"></i> เพิ่มคำสั่ง Prompt ใหม่เข้าสู่ระบบ</h2>
                 
@@ -276,7 +323,6 @@
                             <input type="text" id="pImageUrl" placeholder="https://images.unsplash.com/...">
                         </div>
                         
-                        <!-- โซนตั้งค่า Prompt พรีเมียม -->
                         <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid #FCD34D; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
                             <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #D97706; cursor: pointer; margin-bottom: 0;">
                                 <input type="checkbox" id="pIsPremium" onchange="document.getElementById('priceZone').style.display = this.checked ? 'block' : 'none'" style="width: 20px; height: 20px; accent-color: #F59E0B;">
@@ -295,63 +341,18 @@
                     </form>
                 </div>
             </div>
-
-            <!-- ==========================================
-                 ฟอร์มเพิ่ม Prompt ใหม่ (Admin Only)
-            =========================================== -->
-            <div class="gem-info-card" style="margin-top: 24px;">
-                <h2 style="margin-top: 0; color: #1E3A8A; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-plus-circle" style="color: #9333EA;"></i> เพิ่มคำสั่ง Prompt ใหม่
-                </h2>
-                <form id="addPromptForm" onsubmit="submitNewPrompt(event)">
-                    <div class="form-group">
-                        <label for="pTitle">ชื่อ Prompt (Title)</label>
-                        <input type="text" id="pTitle" required placeholder="เช่น สรุปบทความให้เข้าใจง่ายใน 3 บรรทัด">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="pCategory">หมวดหมู่ (Category)</label>
-                        <select id="pCategory" required>
-                            <option value="marketing">การตลาด</option>
-                            <option value="education">การเรียน</option>
-                            <option value="coding">การเขียนโค้ด</option>
-                            <option value="creative">งานสร้างสรรค์</option>
-                            <option value="productivity">การทำงาน</option>
-                            <option value="image-gen">สร้างภาพ AI</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="pContent">เนื้อหาคำสั่ง (Prompt Content)</label>
-                        <textarea id="pContent" rows="4" required placeholder="ใส่รายละเอียดคำสั่งที่จะให้ AI ทำงาน..."></textarea>
-                    </div>
-
-                    <!-- ระบบเลือกเป็นพรีเมียม (Toggle Premium) -->
-                    <div style="display: flex; gap: 16px; margin-bottom: 20px; background: #FFFBEB; padding: 16px; border-radius: 8px; border: 1px solid #FDE68A;">
-                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #D97706; font-weight: 700; margin: 0;">
-                            <input type="checkbox" id="pIsPremium" onchange="document.getElementById('priceDiv').style.display = this.checked ? 'block' : 'none'" style="width: auto;">
-                            🌟 ตั้งค่าเป็นเนื้อหาพรีเมียม (Premium)
-                        </label>
-                    </div>
-
-                    <div class="form-group" id="priceDiv" style="display: none;">
-                        <label for="pPrice">ราคาปลดล็อก (Gem)</label>
-                        <input type="number" id="pPrice" value="50" min="1">
-                    </div>
-
-                    <button type="submit" class="btn-confirm" style="width: 100%; justify-content: center; padding: 14px; font-size: 1.1rem;">
-                        <i class="fas fa-save"></i> บันทึก Prompt ลงระบบ
-                    </button>
-                </form>
-            </div>
-
         </section>
 
-        <div class="prompt-grid" id="prompt-container">
-        </div>
+        <!-- Grid สำหรับแสดง Prompt (หน้าแรก) -->
+        <div class="prompt-grid" id="prompt-container"></div>
 
     </main>
 
+    <!-- ==========================================
+         MODALS (ป๊อปอัปต่างๆ)
+    =========================================== -->
+    
+    <!-- 1. Modal ล็อกอิน -->
     <div id="loginModal" class="modal-overlay">
         <div class="modal-content">
             <i class="fab fa-google" style="font-size: 3rem; color: #DB4437; margin-bottom: 16px;"></i>
@@ -371,6 +372,7 @@
         </div>
     </div>
 
+    <!-- 2. Modal เติมเงิน (หน้าร้านค้า) -->
     <div id="topupModal" class="modal-overlay">
         <div class="modal-content" style="max-width: 500px;">
             <i class="fas fa-store" style="font-size: 3rem; color: #10B981; margin-bottom: 16px;"></i>
@@ -399,6 +401,7 @@
         </div>
     </div>
 
+    <!-- 3. Modal ชำระเงิน (สแกน QR และอัปโหลดสลิป) -->
     <div id="slipModal" class="modal-overlay">
         <div class="modal-content" style="max-width: 400px; padding: 32px 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -429,13 +432,40 @@
         </div>
     </div>
 
+    <!-- 4. Modal แชร์ Prompt (Community Share) -->
+    <div id="sharePromptModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px; text-align: left;">
+            <h2 style="color: #1E3A8A; margin-top: 0;"><i class="fas fa-lightbulb" style="color: #F59E0B;"></i> แบ่งปัน Prompt ของคุณ</h2>
+            <p style="color: #64748B; font-size: 0.9rem; margin-bottom: 20px;">แชร์คำสั่งเด็ดๆ ของคุณให้เพื่อนๆ และรับฟรี 10 Gem ทันที!</p>
+
+            <form id="userShareForm" onsubmit="submitCommunityPrompt(event)">
+                <div class="form-group">
+                    <label>ชื่อคำสั่ง (Title)</label>
+                    <input type="text" id="shareTitle" required placeholder="เช่น ให้ AI ช่วยแต่งกลอนแปด">
+                </div>
+                <div class="form-group">
+                    <label>เนื้อหาคำสั่ง (Prompt)</label>
+                    <textarea id="shareContent" rows="4" required placeholder="วางคำสั่งของคุณที่นี่..."></textarea>
+                </div>
+                <div class="modal-actions" style="margin-top: 24px;">
+                    <button type="button" onclick="closeShareModal()" class="btn-cancel">ยกเลิก</button>
+                    <button type="submit" class="btn-confirm" style="background: #10B981;">
+                        <i class="fas fa-paper-plane"></i> เผยแพร่ทันที
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <footer class="site-footer">
         <p>&copy; 2026 AI Prompt Directory. ออกแบบและพัฒนาด้วยความตั้งใจ</p>
     </footer>
 
+    <!-- แจ้งเตือน Toast และปุ่มกลับสู่ด้านบน -->
     <div id="toast" class="toast"><i class="fas fa-check-circle" style="margin-right: 8px;"></i>ทำรายการสำเร็จ!</div>
     <button id="backToTop" class="btn-back-to-top"><i class="fas fa-arrow-up"></i></button>
 
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>

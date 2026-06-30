@@ -1,45 +1,176 @@
 /* =========================================
-   การตั้งค่าพื้นฐาน (Base Styles)
+   การนำเข้าฟอนต์ Serif สไตล์หรูหราจาก Google Fonts
 ========================================= */
-body { background-color: #F8FAFC; color: #334155; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
 
 /* =========================================
-   1. HEADER & NAVBAR (ส่วนหัวเว็บ)
+   การตั้งค่าพื้นฐาน & Smooth Scrolling
 ========================================= */
-.site-header { background-color: #FFFFFF; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); position: sticky; top: 0; z-index: 100; }
-.header-container { max-width: 1200px; margin: 0 auto; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
-.logo { font-size: 1.5rem; font-weight: 800; color: #1E3A8A; text-decoration: none; }
-.nav-links { display: flex; align-items: center; }
-.nav-links a { margin-left: 24px; text-decoration: none; color: #64748B; font-weight: 600; transition: color 0.2s; }
-.nav-links a:hover { color: #9333EA; }
+html {
+    scroll-behavior: smooth;
+}
+
+body { 
+    background-color: #F8FAFC; 
+    color: #334155; 
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+    margin: 0; 
+    padding: 0; 
+    display: flex; 
+    flex-direction: column; 
+    min-height: 100vh; 
+}
 
 /* =========================================
-   2. BANNER (ส่วนต้อนรับ)
+   1. CINEMATIC HEADER & NAVBAR (กระจกโปร่งแสง)
 ========================================= */
-.hero-banner { background: linear-gradient(135deg, #1E3A8A 0%, #9333EA 100%); color: #FFFFFF; text-align: center; padding: 80px 20px; }
-.hero-banner h1 { font-size: 3rem; margin: 0 0 16px 0; font-weight: 800; }
-.hero-banner p { font-size: 1.25rem; margin: 0; opacity: 0.9; }
+.cinematic-header {
+    position: absolute; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 24px 0;
+    z-index: 1000;
+    background: transparent;
+}
+
+.header-container-new {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-serif {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-decoration: none;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: flex-start;
+}
+.logo-serif .registered { font-size: 0.8rem; font-family: sans-serif; margin-left: 2px; }
+
+.center-nav { display: flex; gap: 32px; align-items: center; }
+.center-nav a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+}
+.center-nav a:hover, .center-nav a.active { color: #FFFFFF; font-weight: 600; }
+
+.btn-glass {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+    color: #FFFFFF;
+    padding: 10px 24px;
+    border-radius: 99px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+.btn-glass:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.6); }
 
 /* =========================================
-   3. MAIN CONTENT (เนื้อหาหลัก)
+   2. CINEMATIC HERO SECTION
+========================================= */
+.cinematic-hero {
+    position: relative;
+    width: 100%;
+    min-height: 100vh; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url('https://images.unsplash.com/photo-1504333638930-c8787321fea0?q=80&w=2000&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    text-align: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at center, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 100%);
+    z-index: 1;
+}
+
+.hero-content { position: relative; z-index: 2; max-width: 900px; padding: 0 20px; }
+.hero-title-serif { font-family: 'Playfair Display', serif; font-size: 5rem; font-weight: 400; color: #FFFFFF; line-height: 1.1; margin-bottom: 24px; letter-spacing: -1px; }
+.hero-subtitle { font-size: 1.1rem; color: rgba(255, 255, 255, 0.8); line-height: 1.6; max-width: 700px; margin: 0 auto 40px auto; font-weight: 300; }
+
+.btn-glass-large {
+    display: inline-block;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.05);
+    color: #FFFFFF;
+    padding: 16px 40px;
+    border-radius: 99px;
+    text-decoration: none;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(12px);
+    transition: all 0.3s ease;
+}
+.btn-glass-large:hover { background: rgba(255, 255, 255, 0.2); border-color: #FFFFFF; transform: translateY(-2px); }
+
+/* =========================================
+   3. MAIN CONTENT & GRID
 ========================================= */
 .main-content { flex: 1; padding: 60px 20px; width: 100%; max-width: 1200px; margin: 0 auto; box-sizing: border-box; }
 .prompt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
 
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-.prompt-card { background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); transition: transform 0.2s, box-shadow 0.2s; animation: fadeInUp 0.4s ease-out forwards; position: relative; }
-.prompt-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+/* การ์ด Prompt (โหมดสว่าง) */
+.prompt-card { 
+    background-color: #FFFFFF; 
+    border: 1px solid #E2E8F0; 
+    border-radius: 16px; 
+    padding: 24px; 
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); 
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; 
+    animation: fadeInUp 0.4s ease-out forwards; 
+    position: relative; 
+    overflow: hidden; 
+}
+.prompt-card:hover { transform: translateY(-6px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
 
+/* การ์ด Prompt (Glassmorphism ในโหมดมืด) */
+body.dark-mode .prompt-card { 
+    background: rgba(30, 41, 59, 0.4); 
+    backdrop-filter: blur(12px); 
+    -webkit-backdrop-filter: blur(12px); 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); 
+}
+body.dark-mode .prompt-card:hover { border-color: rgba(255, 255, 255, 0.3); box-shadow: 0 12px 40px 0 rgba(147, 51, 234, 0.15); }
+
+/* =========================================
+   ป้ายกำกับ (Badges) & ครีเอเตอร์
+========================================= */
 .badge { font-size: 0.75rem; font-weight: 600; padding: 6px 12px; border-radius: 9999px; display: inline-block; }
 .badge-marketing { background-color: #DBEAFE; color: #1E40AF; }
 .badge-education { background-color: #DCFCE7; color: #166534; }
 .badge-coding { background-color: #FEF3C7; color: #92400E; }
 .badge-creative { background-color: #FCE7F3; color: #9D174D; }
 .badge-productivity { background-color: #E0F2FE; color: #0369A1; }
+/* ป้ายของ Community */
+.badge-community { background-color: #CCFBF1; color: #0F766E; border: 1px solid #5EEAD4; }
+body.dark-mode .badge-community { background-color: rgba(20, 184, 166, 0.15); color: #5EEAD4; border-color: rgba(45, 212, 191, 0.3); }
 
+.prompt-author { font-size: 0.75rem; color: #94A3B8; margin-top: -12px; margin-bottom: 16px; display: flex; align-items: center; gap: 4px; }
+.prompt-author i { color: #3B82F6; }
+
+/* รายละเอียดภายในการ์ด */
 .prompt-card h3 { color: #1E3A8A; font-size: 1.25rem; margin: 16px 0; }
-
 .prompt-box-container { background-color: #F8FAFC; border: 1px solid #F1F5F9; border-radius: 8px; padding: 16px; max-height: 140px; overflow-y: auto; }
 .prompt-box { font-size: 0.875rem; line-height: 1.6; color: #475569; margin: 0; white-space: pre-wrap; }
 .prompt-box-container::-webkit-scrollbar { width: 6px; }
@@ -47,15 +178,19 @@ body { background-color: #F8FAFC; color: #334155; font-family: system-ui, -apple
 .prompt-box-container::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
 .prompt-box-container::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 
+.prompt-image { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease; }
+.prompt-image:hover { transform: scale(1.02); }
+
+/* ปุ่มคัดลอก */
 .btn-copy { background-color: #9333EA; color: #FFFFFF; border: none; border-radius: 8px; width: 100%; padding: 12px; font-weight: 700; cursor: pointer; margin-top: 20px; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .btn-copy:hover { background-color: #7E22CE; }
 .btn-copy:active { transform: scale(0.98); }
 .btn-copy.copied { background-color: #16A34A !important; }
 
 /* =========================================
-   อัปเดตดีไซน์การ์ดพรีเมียม (Premium Locked UI)
+   ระบบ Premium Lock
 ========================================= */
-.prompt-card.premium { border: 2px solid #F59E0B; overflow: hidden; }
+.prompt-card.premium { border: 2px solid #F59E0B; }
 .premium-blur { filter: blur(5px); opacity: 0.5; pointer-events: none; user-select: none; transition: all 0.3s ease; }
 .lock-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.95) 80%); z-index: 10; backdrop-filter: blur(2px); border-radius: 8px; }
 body.dark-mode .lock-overlay { background: linear-gradient(to bottom, rgba(15, 23, 42, 0.1) 0%, rgba(15, 23, 42, 0.98) 80%); }
@@ -65,7 +200,7 @@ body.dark-mode .lock-overlay { background: linear-gradient(to bottom, rgba(15, 2
 @keyframes floatLock { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
 /* =========================================
-   ระบบค้นหา & ทางลัด AI
+   UI ส่วนเสริม (Search, AI Links, Dropdown, Footer)
 ========================================= */
 .search-container { max-width: 600px; margin: 0 auto 30px auto; }
 #searchInput { width: 100%; padding: 16px 24px; font-size: 1.1rem; border: 2px solid #E2E8F0; border-radius: 9999px; outline: none; transition: all 0.3s ease; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); color: #334155; box-sizing: border-box;}
@@ -77,32 +212,6 @@ body.dark-mode .lock-overlay { background: linear-gradient(to bottom, rgba(15, 2
 .ai-link:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); }
 .btn-chatgpt { background-color: #10A37F; } .btn-gemini { background: linear-gradient(90deg, #1A73E8, #8AB4F8); } .btn-claude { background-color: #D97757; }
 
-/* =========================================
-   4. FOOTER & UI COMPONENTS
-========================================= */
-.site-footer { background-color: #0F172A; color: #94A3B8; text-align: center; padding: 30px 20px; font-size: 0.875rem; }
-
-.btn-theme { width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background-color: #F1F5F9; color: #475569; transition: all 0.2s ease; margin-left: 24px; border: none; cursor: pointer; }
-.btn-theme:hover { background-color: #E2E8F0; transform: rotate(15deg) scale(1.1); }
-
-.btn-back-to-top { position: fixed; bottom: 30px; right: 30px; width: 48px; height: 48px; border-radius: 50%; background-color: #9333EA; color: #FFFFFF; border: none; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 14px rgba(147, 51, 234, 0.3); z-index: 999; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transform: translateY(20px); transition: all 0.3s ease; }
-.btn-back-to-top.show { opacity: 1; visibility: visible; transform: translateY(0); }
-.btn-back-to-top:hover { background-color: #7E22CE; transform: translateY(-4px); }
-
-.toast { position: fixed; top: 80px; right: 20px; background-color: #16A34A; color: #FFFFFF; padding: 12px 24px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); opacity: 0; visibility: hidden; transform: translateX(20px); transition: all 0.3s ease; z-index: 1000; }
-.toast.show { opacity: 1; visibility: visible; transform: translateX(0); }
-
-/* =========================================
-   GEMS PAGE & PROFILE
-========================================= */
-#gems-page { animation: fadeInUp 0.4s ease-out forwards; }
-.gems-banner { border-radius: 12px; margin-bottom: 24px; }
-.gem-info-card { background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 24px; }
-.gem-info-card p { color: #64748B; line-height: 1.6; }
-
-/* =========================================
-   ระบบ Dropdown & Icons
-========================================= */
 .dropdown { display: inline-block; position: relative; margin-left: 24px; }
 .dropbtn { text-decoration: none; color: #64748B; font-weight: 600; transition: color 0.2s; display: flex; align-items: center; gap: 6px; padding-top: 5px; padding-bottom: 5px; }
 .dropdown:hover .dropbtn { color: #9333EA; }
@@ -111,9 +220,7 @@ body.dark-mode .lock-overlay { background: linear-gradient(to bottom, rgba(15, 2
 .dropdown-content a.btn-filter:hover { background-color: #F8FAFC; color: #9333EA; padding-left: 24px; }
 .dropdown-content a.btn-filter.active { background-color: #F3E8FF; color: #9333EA; font-weight: 700; border-left: 4px solid #9333EA; }
 .dropdown:hover .dropdown-content { display: block; }
-
 .logo i, .nav-links a i, .dropbtn i, .dropdown-content a i, .ai-link i, .btn-copy i { margin-right: 8px; transition: all 0.2s; }
-.dropdown-arrow { margin-right: 0 !important; margin-left: 6px; font-size: 0.75rem; }
 
 .btn-favorite { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 1.3rem; color: #CBD5E1; cursor: pointer; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; padding: 0; }
 .btn-favorite:hover { transform: scale(1.2); }
@@ -121,19 +228,48 @@ body.dark-mode .lock-overlay { background: linear-gradient(to bottom, rgba(15, 2
 @keyframes heartBurst { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
 .btn-favorite.active { animation: heartBurst 0.3s ease-out; }
 
-.prompt-image { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease; }
-.prompt-image:hover { transform: scale(1.02); }
-.prompt-description { font-size: 0.9rem; color: #64748B; margin-top: -8px; margin-bottom: 16px; line-height: 1.5; }
+.site-footer { background-color: #0F172A; color: #94A3B8; text-align: center; padding: 30px 20px; font-size: 0.875rem; }
+.btn-theme { width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background-color: #F1F5F9; color: #475569; transition: all 0.2s ease; margin-left: 24px; border: none; cursor: pointer; }
+.btn-theme:hover { background-color: #E2E8F0; transform: rotate(15deg) scale(1.1); }
+.btn-back-to-top { position: fixed; bottom: 30px; right: 30px; width: 48px; height: 48px; border-radius: 50%; background-color: #9333EA; color: #FFFFFF; border: none; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 14px rgba(147, 51, 234, 0.3); z-index: 999; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transform: translateY(20px); transition: all 0.3s ease; }
+.btn-back-to-top.show { opacity: 1; visibility: visible; transform: translateY(0); }
+.btn-back-to-top:hover { background-color: #7E22CE; transform: translateY(-4px); }
+.toast { position: fixed; top: 80px; right: 20px; background-color: #16A34A; color: #FFFFFF; padding: 12px 24px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); opacity: 0; visibility: hidden; transform: translateX(20px); transition: all 0.3s ease; z-index: 1000; }
+.toast.show { opacity: 1; visibility: visible; transform: translateX(0); }
 
 /* =========================================
-   ระบบ Login & Modal
+   หน้าโปรไฟล์, ร้านค้า และติดต่อ (Pages)
 ========================================= */
-.btn-login { background-color: #9333EA; color: #FFFFFF !important; padding: 8px 16px; border-radius: 99px; margin-left: 24px; }
-.btn-login:hover { background-color: #7E22CE; transform: translateY(-2px); }
-.user-profile { margin-left: 24px; color: #1E3A8A; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-.btn-logout { color: #EF4444 !important; margin-left: 8px; cursor: pointer; }
-.btn-logout:hover { color: #DC2626 !important; transform: scale(1.1); }
+#gems-page { animation: fadeInUp 0.4s ease-out forwards; }
+.gems-banner { border-radius: 12px; margin-bottom: 24px; }
+.gem-info-card { background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 24px; }
+.gem-info-card p { color: #64748B; line-height: 1.6; }
 
+.contact-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px; align-items: start; }
+.contact-info-card, .contact-form-card { background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+.contact-method { display: flex; align-items: center; gap: 16px; margin-top: 24px; }
+.contact-icon { width: 50px; height: 50px; border-radius: 50%; background-color: #F3E8FF; color: #9333EA; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+.form-group { margin-bottom: 20px; text-align: left; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #334155; font-size: 0.95rem; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px 16px; border: 2px solid #E2E8F0; border-radius: 12px; font-size: 1rem; color: #334155; background-color: #F8FAFC; font-family: inherit; transition: all 0.3s ease; box-sizing: border-box; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #9333EA; background-color: #FFFFFF; outline: none; box-shadow: 0 0 0 4px rgba(147, 51, 234, 0.1); }
+
+.topup-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 16px; margin-top: 16px; }
+.topup-card { background: #F8FAFC; border: 2px solid #E2E8F0; border-radius: 16px; padding: 20px 10px; cursor: pointer; transition: all 0.2s ease; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.topup-card:hover { border-color: #10B981; background: #ECFDF5; transform: translateY(-4px); box-shadow: 0 8px 16px rgba(16, 185, 129, 0.15); }
+.topup-card:active { transform: scale(0.95); }
+.topup-amount { font-size: 1.5rem; font-weight: 800; color: #1E3A8A; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
+.topup-price { font-size: 1.1rem; color: #10B981; font-weight: 700; background: #FFFFFF; padding: 4px 16px; border-radius: 99px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.topup-card.popular { border-color: #F59E0B; background: #FFFBEB; }
+.popular-badge { position: absolute; top: -12px; background: linear-gradient(135deg, #F59E0B, #EA580C); color: white; font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 99px; box-shadow: 0 4px 6px rgba(245, 158, 11, 0.3); }
+
+/* Header Gem Pill */
+.header-gem-pill { display: inline-flex; align-items: center; background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 99px; padding: 6px 12px 6px 16px; gap: 8px; margin-left: 16px; cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-weight: 800; color: #1E3A8A; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+.header-gem-pill:hover { background-color: #FFFFFF; transform: translateY(-2px); border-color: #10B981; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.15); }
+.header-gem-pill .plus-btn { background-color: #10B981; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; margin-left: 4px; transition: transform 0.2s; }
+.header-gem-pill:hover .plus-btn { transform: rotate(90deg); background-color: #059669; }
+
+/* Modals */
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; }
 .modal-overlay.show { display: flex; animation: fadeIn 0.3s; }
 .modal-content { background: #FFFFFF; padding: 40px; border-radius: 24px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: translateY(20px); animation: slideUpModal 0.3s forwards; }
@@ -147,20 +283,33 @@ body.dark-mode .lock-overlay { background: linear-gradient(to bottom, rgba(15, 2
 .btn-confirm:hover { background: #7E22CE; }
 @keyframes slideUpModal { to { transform: translateY(0); } }
 
-/* =========================================
-   CONTACT PAGE (หน้าติดต่อเรา)
-========================================= */
-.contact-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px; align-items: start; }
-.contact-info-card, .contact-form-card { background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-.contact-method { display: flex; align-items: center; gap: 16px; margin-top: 24px; }
-.contact-icon { width: 50px; height: 50px; border-radius: 50%; background-color: #F3E8FF; color: #9333EA; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-.form-group { margin-bottom: 20px; text-align: left; }
-.form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #334155; font-size: 0.95rem; }
-.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px 16px; border: 2px solid #E2E8F0; border-radius: 12px; font-size: 1rem; color: #334155; background-color: #F8FAFC; font-family: inherit; transition: all 0.3s ease; box-sizing: border-box; }
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #9333EA; background-color: #FFFFFF; outline: none; box-shadow: 0 0 0 4px rgba(147, 51, 234, 0.1); }
+/* Admin Dashboard & History */
+.topup-request-card { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; justify-content: space-between; gap: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+.slip-thumbnail { width: 80px; height: 120px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid #CBD5E1; transition: transform 0.2s; }
+.slip-thumbnail:hover { transform: scale(1.1); }
+.request-info { flex: 1; }
+.request-info h4 { margin: 0 0 8px 0; color: #1E3A8A; font-size: 1.1rem; }
+.request-info p { margin: 0 0 4px 0; color: #64748B; font-size: 0.9rem; }
+.btn-approve { background: #10B981; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+.btn-approve:hover { background: #059669; }
+.btn-reject { background: #F8FAFC; color: #EF4444; border: 1px solid #FECACA; padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.btn-reject:hover { background: #FEF2F2; border-color: #EF4444; }
+
+.transaction-list { display: flex; flex-direction: column; gap: 12px; max-height: 350px; overflow-y: auto; padding-right: 8px; }
+.transaction-list::-webkit-scrollbar { width: 6px; }
+.transaction-list::-webkit-scrollbar-track { background: transparent; }
+.transaction-list::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
+.transaction-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; animation: fadeInDown 0.3s ease-out; }
+.tx-info { display: flex; flex-direction: column; gap: 6px; }
+.tx-title { font-weight: 700; color: #1E3A8A; font-size: 1.05rem; }
+.tx-date { font-size: 0.85rem; color: #64748B; }
+.tx-status { padding: 6px 14px; border-radius: 99px; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+.status-pending { background: #FEF3C7; color: #D97706; }
+.status-approved { background: #DCFCE7; color: #15803D; }
+.status-rejected { background: #FEE2E2; color: #B91C1C; }
 
 /* =========================================
-   ระบบตู้สุ่มรางวัล (Lucky Spin / Horizontal Roulette)
+   ระบบตู้สุ่มรางวัล (Lucky Spin)
 ========================================= */
 .roulette-window { position: relative; width: 100%; max-width: 800px; height: 120px; background: #0F172A; border-radius: 12px; margin: 20px auto 0; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); border: 4px solid #1E293B; }
 .roulette-window::before, .roulette-window::after { content: ''; position: absolute; top: 0; bottom: 0; width: 30%; z-index: 2; pointer-events: none; }
@@ -175,8 +324,41 @@ body.dark-mode .lock-overlay { background: linear-gradient(to bottom, rgba(15, 2
 .roulette-item.epic { background: linear-gradient(135deg, #9333EA, #7E22CE); border-color: #D8B4FE; }
 .roulette-item.legendary { background: linear-gradient(135deg, #F59E0B, #B45309); border-color: #FDE047; box-shadow: 0 0 15px rgba(245,158,11,0.5); }
 
+.spin-history-container { margin-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 24px; text-align: left; max-width: 480px; margin-left: auto; margin-right: auto; }
+.spin-history-title { color: #94A3B8; font-size: 0.95rem; font-weight: 600; margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.spin-history-list { list-style: none; padding: 0; margin: 0; max-height: 180px; overflow-y: auto; border-radius: 12px; background: rgba(15, 23, 42, 0.5); border: 1px solid #1E293B; }
+.spin-history-list::-webkit-scrollbar { width: 6px; }
+.spin-history-list::-webkit-scrollbar-track { background: transparent; }
+.spin-history-list::-webkit-scrollbar-thumb { background: #334155; border-radius: 8px; }
+.spin-history-list::-webkit-scrollbar-thumb:hover { background: #475569; }
+.spin-history-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.03); font-size: 0.9rem; animation: fadeInDown 0.3s ease-out; }
+.spin-history-item:last-child { border-bottom: none; }
+.history-reward { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.history-date { color: #64748B; font-size: 0.75rem; }
+.history-empty { padding: 30px 20px; text-align: center; color: #475569; font-style: italic; font-size: 0.9rem; }
+.history-reward.normal { color: #94A3B8; }
+.history-reward.rare { color: #60A5FA; }
+.history-reward.epic { color: #C084FC; text-shadow: 0 0 8px rgba(192, 132, 252, 0.3); }
+.history-reward.legendary { color: #FBBF24; text-shadow: 0 0 10px rgba(251, 191, 36, 0.4); }
+
 /* =========================================
-   DARK MODE (โหมดมืดแบบครอบคลุมทั้งหมด)
+   แอนิเมชันกล่องของขวัญ (Reward Bounce Effect)
+========================================= */
+@keyframes bounceGift {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-15px) scale(1.1); }
+}
+.reward-bounce {
+    display: inline-block;
+    animation: bounceGift 2s ease-in-out infinite;
+}
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   DARK MODE (โหมดมืดแบบครอบคลุม)
 ========================================= */
 body.dark-mode { background-color: #0F172A; color: #F8FAFC; }
 body.dark-mode .site-header { background-color: #1E293B; border-bottom: 1px solid #334155; box-shadow: none; }
@@ -184,7 +366,6 @@ body.dark-mode .logo { color: #F8FAFC; }
 body.dark-mode .nav-links a { color: #CBD5E1; }
 body.dark-mode .nav-links a:hover { color: #A855F7; }
 
-body.dark-mode .prompt-card { background-color: #1E293B; border-color: #334155; }
 body.dark-mode .prompt-card h3 { color: #F8FAFC; }
 body.dark-mode .prompt-box-container { background-color: #0F172A; border-color: #334155; }
 body.dark-mode .prompt-box { color: #CBD5E1; }
@@ -210,412 +391,53 @@ body.dark-mode .dropdown-content a.btn-filter.active { background-color: #334155
 body.dark-mode .modal-content { background: #1E293B; }
 body.dark-mode .modal-content h2, body.dark-mode .user-profile { color: #F8FAFC; }
 body.dark-mode .btn-cancel { background: #334155; color: #CBD5E1; }
-
 body.dark-mode .contact-info-card, body.dark-mode .contact-form-card { background-color: #1E293B; border-color: #334155; }
 body.dark-mode .contact-info-card h2, body.dark-mode .contact-method h4 { color: #F8FAFC; }
 body.dark-mode .contact-icon { background-color: #0F172A; color: #A855F7; }
 body.dark-mode .form-group label { color: #CBD5E1; }
 body.dark-mode .form-group input, body.dark-mode .form-group select, body.dark-mode .form-group textarea { background-color: #0F172A; border-color: #334155; color: #F8FAFC; }
 body.dark-mode .form-group input:focus, body.dark-mode .form-group select:focus, body.dark-mode .form-group textarea:focus { background-color: #1E293B; border-color: #A855F7; box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.15); }
-
-/* แก้บั๊กพื้นหลังขาวให้หน้าสุ่มรางวัล และหน้าโปรไฟล์ */
 body.dark-mode .gem-info-card { background-color: #1E293B; border-color: #334155; }
 body.dark-mode .gem-info-card h2, body.dark-mode .gem-info-card h3 { color: #F8FAFC; }
 body.dark-mode .gem-info-card p { color: #CBD5E1; }
 
-/* ===================================================
-   📱 RESPONSIVE DESIGN (วางล่างสุดเสมอ ห้ามมีใครมาต่อท้าย)
-=================================================== */
-@media (max-width: 768px) {
-    .header-container { flex-direction: column; justify-content: center; gap: 16px; padding: 16px 12px; }
-    .nav-links { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; width: 100%; gap: 12px; }
-    .nav-links a:not(.btn-login):not(.btn-logout), .dropdown { margin-left: 0; font-size: 0.9rem; }
-    .btn-login { margin-left: 0; margin-top: 8px; width: 100%; justify-content: center; }
-    .user-profile { margin-left: 0; margin-top: 8px; width: 100%; justify-content: center; }
-    .btn-theme { margin-left: 0; padding: 4px 8px; }
-    .dropdown-content { left: 50%; transform: translateX(-50%); width: 90vw; max-width: 300px; }
-    .contact-layout { grid-template-columns: 1fr; }
-}
-
-/* =========================================
-   TOP-UP STORE (ระบบร้านค้าเติม Gem)
-========================================= */
-.topup-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 16px;
-    margin-top: 16px;
-}
-
-.topup-card {
-    background: #F8FAFC;
-    border: 2px solid #E2E8F0;
-    border-radius: 16px;
-    padding: 20px 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.topup-card:hover {
-    border-color: #10B981;
-    background: #ECFDF5;
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(16, 185, 129, 0.15);
-}
-
-.topup-card:active { transform: scale(0.95); }
-
-.topup-amount {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: #1E3A8A;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.topup-price {
-    font-size: 1.1rem;
-    color: #10B981;
-    font-weight: 700;
-    background: #FFFFFF;
-    padding: 4px 16px;
-    border-radius: 99px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-/* ป้ายสินค้าขายดี (คุ้มค่าสุด) */
-.topup-card.popular {
-    border-color: #F59E0B;
-    background: #FFFBEB;
-}
-
-.popular-badge {
-    position: absolute;
-    top: -12px;
-    background: linear-gradient(135deg, #F59E0B, #EA580C);
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 99px;
-    box-shadow: 0 4px 6px rgba(245, 158, 11, 0.3);
-}
-
-/* =========================================
-   ปุ่มเติม Gem พรีเมียม (Top-up CTA)
-========================================= */
-.btn-topup-premium {
-    background: #10B981; /* สีเขียวมรกต สื่อถึงการเงิน/ความสำเร็จ */
-    color: #FFFFFF;
-    border: none;
-    padding: 14px 28px;
-    border-radius: 99px; /* ขอบมนให้ดูเป็นมิตร */
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.btn-topup-premium:hover {
-    transform: translateY(-3px) scale(1.05); /* เด้งรับเมาส์ */
-    background: #059669;
-    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
-}
-
-.btn-topup-premium:active {
-    transform: scale(0.95);
-}
-
-/* ปรับให้รองรับมือถือ (Responsive) */
-@media (max-width: 768px) {
-    .btn-topup-premium {
-        width: 100%; /* บนมือถือให้ปุ่มขยายเต็มพื้นที่ */
-        justify-content: center;
-        margin-top: 16px;
-    }
-}
-
-/* =========================================
-   ปุ่มสถานะ Gem บน Header (Header Gem Pill)
-========================================= */
-.header-gem-pill {
-    display: inline-flex;
-    align-items: center;
-    background-color: #F8FAFC;
-    border: 1px solid #E2E8F0;
-    border-radius: 99px;
-    padding: 6px 12px 6px 16px;
-    gap: 8px;
-    margin-left: 16px;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    font-weight: 800;
-    color: #1E3A8A;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-}
-
-.header-gem-pill:hover {
-    background-color: #FFFFFF;
-    transform: translateY(-2px);
-    border-color: #10B981; /* เรืองแสงสีเขียวตอนชี้ */
-    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.15);
-}
-
-.header-gem-pill .plus-btn {
-    background-color: #10B981; /* ปุ่มบวกสีเขียวมรกต */
-    color: white;
-    border-radius: 50%;
-    width: 22px;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    margin-left: 4px;
-    transition: transform 0.2s;
-}
-
-.header-gem-pill:hover .plus-btn {
-    transform: rotate(90deg); /* หมุนปุ่มบวกเท่ๆ */
-    background-color: #059669;
-}
-
-/* รองรับโหมดมืด (Dark Mode) */
-body.dark-mode .header-gem-pill { background-color: #1E293B; border-color: #334155; color: #F8FAFC; }
-body.dark-mode .header-gem-pill:hover { background-color: #0F172A; border-color: #10B981; }
-
-/* ย่อขนาดตอนดูบนมือถือ */
-@media (max-width: 768px) {
-    .header-gem-pill { margin-left: 0; margin-top: 8px; }
-}
-
-/* รองรับ Dark Mode */
 body.dark-mode .topup-card { background: #0F172A; border-color: #334155; }
 body.dark-mode .topup-card:hover { border-color: #10B981; background: rgba(16, 185, 129, 0.1); }
 body.dark-mode .topup-card.popular { border-color: #F59E0B; background: rgba(245, 158, 11, 0.1); }
 body.dark-mode .topup-amount { color: #F8FAFC; }
 body.dark-mode .topup-price { background: #1E293B; }
 
-/* =========================================
-   ระบบหลังบ้าน (Admin Dashboard UI)
-========================================= */
-.topup-request-card {
-    background: #F8FAFC;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-}
+body.dark-mode .header-gem-pill { background-color: #1E293B; border-color: #334155; color: #F8FAFC; }
+body.dark-mode .header-gem-pill:hover { background-color: #0F172A; border-color: #10B981; }
 
-.slip-thumbnail {
-    width: 80px;
-    height: 120px;
-    object-fit: cover;
-    border-radius: 8px;
-    cursor: pointer;
-    border: 2px solid #CBD5E1;
-    transition: transform 0.2s;
-}
-
-.slip-thumbnail:hover {
-    transform: scale(1.1);
-}
-
-.request-info { flex: 1; }
-.request-info h4 { margin: 0 0 8px 0; color: #1E3A8A; font-size: 1.1rem; }
-.request-info p { margin: 0 0 4px 0; color: #64748B; font-size: 0.9rem; }
-
-.btn-approve {
-    background: #10B981;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.btn-approve:hover { background: #059669; }
-
-.btn-reject {
-    background: #F8FAFC;
-    color: #EF4444;
-    border: 1px solid #FECACA;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-reject:hover { background: #FEF2F2; border-color: #EF4444; }
-
-/* รองรับโหมดมืด */
 body.dark-mode .topup-request-card { background: #1E293B; border-color: #334155; }
 body.dark-mode .request-info h4 { color: #F8FAFC; }
 body.dark-mode .request-info p { color: #CBD5E1; }
 body.dark-mode .btn-reject { background: #0F172A; border-color: #7F1D1D; }
 
-/* =========================================
-   ประวัติการสุ่ม (Spin History UI)
-========================================= */
-.spin-history-container {
-    margin-top: 40px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05); /* เส้นคั่นบางๆ */
-    padding-top: 24px;
-    text-align: left;
-    max-width: 480px; /* บีบให้พอดีกับความกว้างปุ่มสุ่ม */
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.spin-history-title {
-    color: #94A3B8;
-    font-size: 0.95rem;
-    font-weight: 600;
-    margin-top: 0;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.spin-history-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    max-height: 180px; /* ล็อกความสูงเพื่อทำ Scrollbar */
-    overflow-y: auto;
-    border-radius: 12px;
-    background: rgba(15, 23, 42, 0.5); /* พื้นหลังโปร่งแสง */
-    border: 1px solid #1E293B;
-}
-
-/* แต่ง Scrollbar ให้เรียบหรู */
-.spin-history-list::-webkit-scrollbar { width: 6px; }
-.spin-history-list::-webkit-scrollbar-track { background: transparent; }
-.spin-history-list::-webkit-scrollbar-thumb { background: #334155; border-radius: 8px; }
-.spin-history-list::-webkit-scrollbar-thumb:hover { background: #475569; }
-
-.spin-history-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-    font-size: 0.9rem;
-    animation: fadeInDown 0.3s ease-out;
-}
-.spin-history-item:last-child { border-bottom: none; }
-
-.history-reward {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 600;
-}
-
-.history-date {
-    color: #64748B;
-    font-size: 0.75rem;
-}
-
-.history-empty {
-    padding: 30px 20px;
-    text-align: center;
-    color: #475569;
-    font-style: italic;
-    font-size: 0.9rem;
-}
-
-/* สีของประวัติแยกตามระดับความแรร์ */
-.history-reward.normal { color: #94A3B8; }
-.history-reward.rare { color: #60A5FA; }
-.history-reward.epic { color: #C084FC; text-shadow: 0 0 8px rgba(192, 132, 252, 0.3); }
-.history-reward.legendary { color: #FBBF24; text-shadow: 0 0 10px rgba(251, 191, 36, 0.4); }
-
-@keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* =========================================
-   ประวัติการทำรายการ (Transaction History UI)
-========================================= */
-.transaction-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    max-height: 350px;
-    overflow-y: auto;
-    padding-right: 8px;
-}
-
-.transaction-list::-webkit-scrollbar { width: 6px; }
-.transaction-list::-webkit-scrollbar-track { background: transparent; }
-.transaction-list::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
 body.dark-mode .transaction-list::-webkit-scrollbar-thumb { background: #334155; }
 body.dark-mode .transaction-list::-webkit-scrollbar-thumb:hover { background: #475569; }
-
-.transaction-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-    background: #F8FAFC;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    animation: fadeInDown 0.3s ease-out;
-}
-
-body.dark-mode .transaction-item {
-    background: rgba(15, 23, 42, 0.5);
-    border-color: #1E293B;
-}
-
-.tx-info { display: flex; flex-direction: column; gap: 6px; }
-.tx-title { font-weight: 700; color: #1E3A8A; font-size: 1.05rem; }
+body.dark-mode .transaction-item { background: rgba(15, 23, 42, 0.5); border-color: #1E293B; }
 body.dark-mode .tx-title { color: #F8FAFC; }
-.tx-date { font-size: 0.85rem; color: #64748B; }
-
-/* ป้ายสถานะ (Status Badges) */
-.tx-status {
-    padding: 6px 14px;
-    border-radius: 99px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-/* โหมดสว่าง */
-.status-pending { background: #FEF3C7; color: #D97706; }
-.status-approved { background: #DCFCE7; color: #15803D; }
-.status-rejected { background: #FEE2E2; color: #B91C1C; }
-
-/* โหมดมืด */
 body.dark-mode .status-pending { background: rgba(245, 158, 11, 0.15); color: #FCD34D; }
 body.dark-mode .status-approved { background: rgba(34, 197, 94, 0.15); color: #86EFAC; }
 body.dark-mode .status-rejected { background: rgba(239, 68, 68, 0.15); color: #FCA5A5; }
 
-/* ปรับให้รองรับมือถือ (Responsive) */
+/* ===================================================
+   📱 RESPONSIVE DESIGN (การแสดงผลบนมือถือและแท็บเล็ต)
+=================================================== */
+@media (max-width: 768px) {
+    .header-container-new { flex-direction: column; justify-content: center; gap: 16px; padding: 16px 12px; }
+    .center-nav { flex-wrap: wrap; justify-content: center; width: 100%; gap: 12px; }
+    .hero-title-serif { font-size: 3rem; }
+    .btn-login { margin-left: 0; margin-top: 8px; width: 100%; justify-content: center; }
+    .user-profile { margin-left: 0; margin-top: 8px; width: 100%; justify-content: center; }
+    .btn-theme { margin-left: 0; padding: 4px 8px; }
+    .dropdown-content { left: 50%; transform: translateX(-50%); width: 90vw; max-width: 300px; }
+    .contact-layout { grid-template-columns: 1fr; }
+    .header-gem-pill { margin-left: 0; margin-top: 8px; }
+}
+
 @media (max-width: 600px) {
     .transaction-item { flex-direction: column; align-items: flex-start; gap: 12px; }
     .tx-status { align-self: flex-start; }

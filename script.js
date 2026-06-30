@@ -1,5 +1,5 @@
 // ==========================================
-// ส่วนที่ 1: ระบบแจ้งเตือน และคัดลอก (Copy)
+// ส่วนที่ 1: ระบบแจ้งเตือน และคัดลอก (Creator Economy)
 // ==========================================
 function showToast(message = "สำเร็จ!") {
     const toast = document.getElementById("toast");
@@ -10,7 +10,12 @@ function showToast(message = "สำเร็จ!") {
 
 async function copyPrompt(elementId, buttonElement) {
     const textToCopy = document.getElementById(elementId).innerText;
-    const promptId = elementId.replace('-text', '');
+    
+    // หาการ์ดเพื่อดึง ID ข้อมูล
+    const card = buttonElement.closest('.prompt-card');
+    const promptId = card.getAttribute('data-id');
+    const promptAuthorId = card.getAttribute('data-author-id'); // ดึง ID ของครีเอเตอร์
+
     try {
         await navigator.clipboard.writeText(textToCopy);
         
@@ -18,29 +23,73 @@ async function copyPrompt(elementId, buttonElement) {
         const text = buttonElement.querySelector('.text');
         const originalIconHTML = icon.innerHTML;
         const originalText = text.innerText;
-        let buttonFeedbackText = "คัดลอกแล้ว";
 
-        if (currentUser && !rewardedPrompts.has(promptId)) {
-            await db.collection('users').doc(currentUser.uid).update({ gems: firebase.firestore.FieldValue.increment(5) });
-            rewardedPrompts.add(promptId);
-            const doc = await db.collection('users').doc(currentUser.uid).get();
-            updateGemDisplay(doc.data().gems);
-            buttonFeedbackText = `+5 Gem 💎`;
-            showToast(`คัดลอกสำเร็จ! ได้รับ 5 Gem 💎`);
-        } else {
-            showToast("คัดลอกคำสั่งสำเร็จ!");
+        // ลอจิก Creator Economy: ถ้าล็อกอินอยู่ + เป็น Prompt ทางบ้าน + ไม่ใช่ของตัวเอง
+        if (currentUser && promptAuthorId && promptAuthorId !== currentUser.uid) {
+            const userRef = db.collection('users').doc(currentUser.uid);
+            const userDoc = await userRef.get();
+            const copiedPromptsHistory = userDoc.data().copiedPromptsHistory || [];
+
+            // ตรวจสอบว่าเคยให้แต้ม Prompt นี้ไปหรือยัง? (ป้องกันสแปม)
+            if (!copiedPromptsHistory.includes(promptId)) {
+                // 1. บันทึกประวัติว่าผู้ใช้นี้ก๊อปปี้ไปแล้ว
+                await userRef.update({
+                    copiedPromptsHistory: firebase.firestore.FieldValue.arrayUnion(promptId)
+                });
+
+                // 2. ส่ง 50 Gem ไปเข้า "กล่องรอรับรางวัล" ของผู้สร้าง
+                await db.collection('users').doc(promptAuthorId).update({
+                    claimableGems: firebase.firestore.FieldValue.increment(50)
+                });
+            }
         }
 
+        showToast("คัดลอกคำสั่งสำเร็จ!");
+        
+        // เอฟเฟกต์ปุ่มสีเขียว
         buttonElement.classList.add('copied');
         icon.innerHTML = '<i class="fas fa-check"></i>'; 
-        text.innerText = buttonFeedbackText;
+        text.innerText = "คัดลอกแล้ว";
+        
         setTimeout(() => {
             buttonElement.classList.remove('copied');
             icon.innerHTML = originalIconHTML;
             text.innerText = originalText;
         }, 2000);
 
-    } catch (e) { alert("คัดลอกไม่ได้ครับ"); }
+    } catch (e) { 
+        alert("เบราว์เซอร์ของคุณไม่รองรับการคัดลอกอัตโนมัติครับ"); 
+    }
+}
+
+// ==========================================
+// ฟังก์ชันกดรับรางวัลสำหรับ Creator (Claim Rewards)
+// ==========================================
+async function claimCreatorRewards() {
+    if (!currentUser) return;
+    
+    try {
+        const userRef = db.collection('users').doc(currentUser.uid);
+        const doc = await userRef.get();
+        const gemsToClaim = doc.data().claimableGems || 0;
+
+        if (gemsToClaim > 0) {
+            // โอน Gem จากกล่องเข้ายอดหลัก และเคลียร์กล่องทิ้ง
+            await userRef.update({
+                gems: firebase.firestore.FieldValue.increment(gemsToClaim),
+                claimableGems: 0
+            });
+            
+            // อัปเดต UI หน้าจอ
+            updateGemDisplay(doc.data().gems + gemsToClaim);
+            document.getElementById('rewardBoxContainer').style.display = 'none';
+            
+            showToast(`🎉 สุดยอด! คุณได้รับโบนัสครีเอเตอร์ ${gemsToClaim} Gem เรียบร้อยแล้ว`);
+        }
+    } catch (error) {
+        console.error("Claim error:", error);
+        alert("เกิดข้อผิดพลาดในการรับรางวัลครับ");
+    }
 }
 
 // ==========================================
@@ -71,21 +120,19 @@ async function toggleFavorite(promptId, btnElement) {
         await userRef.update({ favorites: firebase.firestore.FieldValue.arrayRemove(promptId) });
     }
     
-    loadPrompts();
+    loadPrompts(); // โหลดข้อมูลใหม่เพื่ออัปเดต UI
 }
 
 // ==========================================
-// ส่วนที่ 3: โหลดข้อมูล และสร้างการ์ด Prompt (แบบ Real-time จาก Firebase)
+// ส่วนที่ 3: โหลดข้อมูล และสร้างการ์ด Prompt (Real-time Firebase)
 // ==========================================
 function loadPrompts() {
     const container = document.getElementById('prompt-container');
     const profileFavContainer = document.getElementById('profile-favorites-grid'); 
     
-    // แสดงสถานะกำลังโหลด
     container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #64748B;"><i class="fas fa-circle-notch fa-spin fa-3x" style="color: #9333EA; margin-bottom: 16px;"></i><p>กำลังเชื่อมต่อฐานข้อมูลคำสั่ง AI...</p></div>';
     if (profileFavContainer) profileFavContainer.innerHTML = ''; 
 
-    // onSnapshot จะดึงข้อมูลและอัปเดตหน้าเว็บอัตโนมัติเมื่อมีการเพิ่ม/ลบ Prompt
     db.collection('prompts').onSnapshot(snapshot => {
         container.innerHTML = '';
         let favCount = 0;
@@ -95,10 +142,9 @@ function loadPrompts() {
             return;
         }
 
-        // จัดเรียงลำดับ (ถ้ามี) หรือแสดงตามที่ดึงมา
         snapshot.forEach(doc => {
             const item = doc.data();
-            item.id = doc.id; // ให้ ID ตรงกับ Document ใน Firebase
+            item.id = doc.id; 
 
             const isFavorited = currentFavorites.includes(item.id);
             const isUnlocked = unlockedPrompts.includes(item.id);
@@ -107,9 +153,11 @@ function loadPrompts() {
             const imageHTML = item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.title}" class="prompt-image">` : '';
             const badgeHTML = item.categoryName ? `<span class="badge ${item.badgeColor}">${item.categoryName}</span>` : '';
             const descHTML = item.description ? `<p class="prompt-description">${item.description}</p>` : '';
+            const authorHTML = item.authorName ? `<div class="prompt-author"><i class="fas fa-user-edit"></i> แชร์โดย: ${item.authorName}</div>` : '';
 
+            // ⚠️ เพิ่ม data-author-id สำหรับระบบแจก Gem
             const cardHTML = `
-                <div class="prompt-card ${isPremium && !isUnlocked ? 'premium' : ''}" data-category="${item.categoryId}" data-id="${item.id}">
+                <div class="prompt-card ${isPremium && !isUnlocked ? 'premium' : ''}" data-category="${item.categoryId}" data-id="${item.id}" data-author-id="${item.authorId || ''}">
                     
                     <button class="btn-favorite ${isFavorited ? 'active' : ''}" onclick="toggleFavorite('${item.id}', this)">
                         <i class="${isFavorited ? 'fas fa-heart favorited' : 'far fa-heart'}"></i>
@@ -118,6 +166,7 @@ function loadPrompts() {
                     ${imageHTML}
                     ${badgeHTML}
                     <h3>${item.title}</h3>
+                    ${authorHTML}
                     ${descHTML}
                     
                     <div style="position: relative;">
@@ -198,7 +247,7 @@ function initTheme() {
 }
 
 // ==========================================
-// ส่วนที่ 5: ตั้งค่า Firebase
+// ส่วนที่ 5: ตั้งค่า Firebase & ตัวแปร Global
 // ==========================================
 const firebaseConfig = {
     apiKey: "AIzaSyCr89ya9M0R2Skk5gmOHir8qCLCB_-RYgo",
@@ -216,7 +265,6 @@ const db = firebase.firestore();
 let currentUser = null;
 let currentFavorites = [];
 let unlockedPrompts = [];
-let rewardedPrompts = new Set();
 
 // ==========================================
 // ส่วนที่ 6: ระบบจัดการสมาชิก (Auth & Profile)
@@ -231,19 +279,38 @@ function initAuth() {
         const profileNameBig = document.getElementById('profileNameBig');
         const profileEmailBig = document.getElementById('profileEmailBig');
         const profileAvatarBig = document.getElementById('profileAvatarBig');
+        const rewardBox = document.getElementById('rewardBoxContainer'); // กล่องของขวัญ
 
         if (user) {
             currentUser = user;
             const doc = await db.collection('users').doc(user.uid).get();
             
             if (!doc.exists) {
-                await db.collection('users').doc(user.uid).set({ gems: 100, favorites: [], unlockedPrompts: [] });
+                // สมัครใหม่ เซ็ตค่าพื้นฐานทั้งหมด
+                await db.collection('users').doc(user.uid).set({ 
+                    gems: 100, 
+                    favorites: [], 
+                    unlockedPrompts: [],
+                    copiedPromptsHistory: [],
+                    claimableGems: 0
+                });
                 updateGemDisplay(100);
+                if(rewardBox) rewardBox.style.display = 'none';
             } else {
                 const userData = doc.data();
                 updateGemDisplay(userData.gems);
                 currentFavorites = userData.favorites || [];
                 unlockedPrompts = userData.unlockedPrompts || [];
+                
+                // ตรวจสอบกล่องของขวัญว่ามี Gem ค้างอยู่ไหม
+                const claimableGems = userData.claimableGems || 0;
+                if (claimableGems > 0 && rewardBox) {
+                    rewardBox.style.display = 'block';
+                    const pendingEl = document.getElementById('pendingGemsCount');
+                    if(pendingEl) pendingEl.innerText = claimableGems;
+                } else if (rewardBox) {
+                    rewardBox.style.display = 'none';
+                }
 
                 let userNameDisplay = user.displayName || 'User';
                 
@@ -251,7 +318,7 @@ function initAuth() {
                 if (userData.role === 'admin') {
                     userNameDisplay = "Admin 👑";
                     if(adminLink) adminLink.style.display = 'inline-flex';
-                    loadAdminTopups(); // โหลดข้อมูลสลิปที่รอตรวจสอบ
+                    loadAdminTopups();
                 }
                 
                 if (profileNameBig) profileNameBig.innerText = userNameDisplay;
@@ -278,6 +345,7 @@ function initAuth() {
             if (profileNameBig) profileNameBig.innerText = "กรุณาล็อกอิน";
             if (profileEmailBig) profileEmailBig.innerText = "-";
             if (profileAvatarBig) profileAvatarBig.innerHTML = "👤";
+            if (rewardBox) rewardBox.style.display = 'none';
 
             if(loginBtn) loginBtn.style.display = 'inline-flex';
             if(headerGemContainer) headerGemContainer.style.display = 'none';
@@ -291,7 +359,6 @@ function initAuth() {
 function updateGemDisplay(gems) {
     const elProfile = document.getElementById('gemCountDisplay');
     const elHeader = document.getElementById('headerGemCount'); 
-    
     if(elProfile) elProfile.innerText = gems;
     if(elHeader) elHeader.innerText = gems;
 }
@@ -406,7 +473,7 @@ function initNavigation() {
             if(!currentUser) return openLoginModal();
             hideAllPages();
             gemsPage.style.display = 'block'; 
-            loadUserTopupHistory();
+            loadUserTopupHistory(); // โหลดประวัติเติมเงินด้วย
         });
     }
 
@@ -489,17 +556,14 @@ function getRandomReward() {
     return rewardsPool[0]; 
 }
 
-// ตัวแปรสำหรับยกเลิกการดึงข้อมูลเพื่อประหยัดทรัพยากร
 let spinHistoryUnsubscribe = null;
 
-// ฟังก์ชันดึงประวัติการสุ่ม (ฉบับแก้บั๊ก Firebase Index)
 function loadSpinHistory() {
     if (!currentUser) return;
     const listContainer = document.getElementById('spinHistoryList');
 
     if (spinHistoryUnsubscribe) spinHistoryUnsubscribe();
 
-    // ดึงข้อมูลเฉพาะของ User นี้ (ถอด orderBy ออกเพื่อเลี่ยง Index Error)
     spinHistoryUnsubscribe = db.collection('spin_history')
         .where('userId', '==', currentUser.uid)
         .onSnapshot(snapshot => {
@@ -508,22 +572,18 @@ function loadSpinHistory() {
                 return;
             }
 
-            // 1. นำข้อมูลมาเก็บใน Array ก่อน
             let historyData = [];
             snapshot.forEach(doc => historyData.push(doc.data()));
             
-            // 2. ใช้ JavaScript เรียงลำดับจาก "ใหม่สุด" ไป "เก่าสุด"
             historyData.sort((a, b) => {
                 const timeA = a.timestamp ? a.timestamp.toDate().getTime() : Date.now();
                 const timeB = b.timestamp ? b.timestamp.toDate().getTime() : Date.now();
                 return timeB - timeA;
             });
 
-            // 3. ตัดเอาแค่ 10 รายการล่าสุดมาแสดงผล
             historyData = historyData.slice(0, 10);
-
-            // 4. สร้าง UI แสดงผล
             listContainer.innerHTML = ''; 
+            
             historyData.forEach(data => {
                 const dateStr = data.timestamp ? data.timestamp.toDate().toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' }) : 'เมื่อสักครู่';
 
@@ -536,9 +596,7 @@ function loadSpinHistory() {
                     </li>
                 `;
             });
-        }, error => {
-            console.error("เกิดข้อผิดพลาดในการดึงประวัติ:", error);
-        });
+        }, error => console.error("เกิดข้อผิดพลาดในการดึงประวัติ:", error));
 }
 
 async function startSpin() {
@@ -568,7 +626,6 @@ async function startSpin() {
 
     const itemWidth = 110; 
     const winningIndex = 40; 
-    
     const winningReward = getRandomReward();
 
     for (let i = 0; i < 50; i++) {
@@ -604,24 +661,19 @@ async function startSpin() {
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
 
-            if (winningReward.type === 'legendary') {
-                alert(`👑 แจ็คพอตแตก!! ยินดีด้วยคุณได้รับ ${winningReward.name} Gem!`);
-            } else if (winningReward.type === 'normal') {
-                showToast(`เกลือรึเปล่า? ได้มา ${winningReward.value} Gem 😅`);
-            } else {
-                showToast(`🎉 ยินดีด้วย! คุณได้รับ ${winningReward.value} Gem`);
-            }
+            if (winningReward.type === 'legendary') alert(`👑 แจ็คพอตแตก!! ยินดีด้วยคุณได้รับ ${winningReward.name} Gem!`);
+            else if (winningReward.type === 'normal') showToast(`เกลือรึเปล่า? ได้มา ${winningReward.value} Gem 😅`);
+            else showToast(`🎉 ยินดีด้วย! คุณได้รับ ${winningReward.value} Gem`);
 
             isSpinning = false;
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-play"></i> เริ่มสุ่มอีกครั้ง (20 Gem)';
         }, 5200);
-
     }, 50);
 }
 
 // ==========================================
-// ส่วนที่ 11: ระบบเติม Gem (อัปโหลดสลิปเข้าฐานข้อมูลจริง)
+// ส่วนที่ 11: ระบบเติม Gem และประวัติการทำรายการ
 // ==========================================
 let pendingTopup = { gems: 0, price: 0 }; 
 
@@ -648,28 +700,22 @@ function processTopup(gemAmount, price) {
 
 function closeSlipModal() { document.getElementById('slipModal').classList.remove('show'); }
 
-// อัปโหลดสลิปเข้า Firebase พร้อมระบบบีบอัดภาพอัตโนมัติ
 function handleSlipUpload(event) {
     const file = event.target.files[0];
     if (!file) return; 
 
-    // เปลี่ยนหน้าจอเป็นสถานะกำลังโหลดทันทีที่เลือกไฟล์เสร็จ
     document.getElementById('uploadZone').style.display = 'none';
     document.getElementById('slipProcessing').style.display = 'block';
 
     const reader = new FileReader();
     reader.onload = function(e) {
-        // สร้างออบเจกต์ Image เพื่อเตรียมย่อขนาด
         const img = new Image();
         img.onload = async function() {
-            // สร้าง Canvas เพื่อวาดภาพใหม่ให้ขนาดเล็กลง
             const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 600; // กำหนดความกว้างสูงสุดให้เหลือแค่ 600px
+            const MAX_WIDTH = 600; 
             let scaleSize = 1;
             
-            if (img.width > MAX_WIDTH) {
-                scaleSize = MAX_WIDTH / img.width;
-            }
+            if (img.width > MAX_WIDTH) scaleSize = MAX_WIDTH / img.width;
             
             canvas.width = img.width * scaleSize;
             canvas.height = img.height * scaleSize;
@@ -677,18 +723,16 @@ function handleSlipUpload(event) {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-            // แปลงภาพที่ย่อแล้วเป็น Base64 (ตั้งค่าคุณภาพ JPEG ที่ 70% เพื่อให้ไฟล์เล็กสุดๆ)
             const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
             
             try {
-                // บันทึกคำขอลง Collection 'topup_requests'
                 await db.collection('topup_requests').add({
                     userId: currentUser.uid,
                     userName: currentUser.displayName || 'User',
                     userEmail: currentUser.email,
                     gemsRequested: pendingTopup.gems,
                     amountPaid: pendingTopup.price,
-                    slipImage: compressedBase64, // ใช้ภาพที่บีบอัดแล้ว
+                    slipImage: compressedBase64, 
                     status: 'pending', 
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
@@ -704,24 +748,18 @@ function handleSlipUpload(event) {
         };
         img.src = e.target.result;
     };
-    // อ่านไฟล์ที่อัปโหลดมา
     reader.readAsDataURL(file);
 }
 
-// ตัวแปรสำหรับยกเลิกการดึงประวัติเติมเงิน
 let userTopupUnsubscribe = null;
 
-// ฟังก์ชันดึงประวัติการเติมเงินของผู้ใช้งาน
 function loadUserTopupHistory() {
     if (!currentUser) return;
     const container = document.getElementById('user-topup-history-list');
     
-    // เคลียร์การเชื่อมต่อเก่าทิ้ง
     if (userTopupUnsubscribe) userTopupUnsubscribe();
-
     container.innerHTML = '<p class="history-empty"><i class="fas fa-spinner fa-spin"></i> กำลังโหลดข้อมูล...</p>';
 
-    // ดึงเฉพาะของ User นี้ (ไม่มี orderBy เพื่อเลี่ยงปัญหา Composite Index)
     userTopupUnsubscribe = db.collection('topup_requests')
         .where('userId', '==', currentUser.uid)
         .onSnapshot(snapshot => {
@@ -730,23 +768,19 @@ function loadUserTopupHistory() {
                 return;
             }
 
-            // 1. นำข้อมูลมาเก็บใน Array
             let txData = [];
             snapshot.forEach(doc => txData.push(doc.data()));
 
-            // 2. ใช้ JavaScript เรียงลำดับจาก "ใหม่สุด" ไป "เก่าสุด"
             txData.sort((a, b) => {
                 const timeA = a.createdAt ? a.createdAt.toDate().getTime() : Date.now();
                 const timeB = b.createdAt ? b.createdAt.toDate().getTime() : Date.now();
                 return timeB - timeA;
             });
 
-            // 3. สร้าง UI แสดงผล
             container.innerHTML = '';
             txData.forEach(data => {
                 const dateStr = data.createdAt ? data.createdAt.toDate().toLocaleString('th-TH') : 'กำลังดำเนินการ...';
                 
-                // เช็กสถานะเพื่อเปลี่ยนสี Badge และไอคอน
                 let statusConfig = { class: 'status-pending', icon: 'fa-clock', text: 'รอตรวจสอบ' };
                 if (data.status === 'approved') statusConfig = { class: 'status-approved', icon: 'fa-check-circle', text: 'อนุมัติสำเร็จ' };
                 else if (data.status === 'rejected') statusConfig = { class: 'status-rejected', icon: 'fa-times-circle', text: 'รายการถูกปฏิเสธ' };
@@ -819,7 +853,6 @@ async function processAdminAction(requestId, userId, gemsToAdd, action) {
         }
         
         await reqRef.update({ status: action });
-        
         showToast(action === 'approved' ? "✅ อนุมัติและเติม Gem สำเร็จ!" : "❌ ปฏิเสธรายการสำเร็จ");
 
     } catch (error) {
@@ -828,47 +861,14 @@ async function processAdminAction(requestId, userId, gemsToAdd, action) {
     }
 }
 
-// ==========================================
-// เครื่องมือพิเศษ: ย้ายข้อมูลจาก JSON เข้า Firebase
-// (คำเตือน: รันแค่ครั้งเดียวเมื่อย้ายฐานข้อมูลเท่านั้น)
-// ==========================================
-window.migratePromptsToFirebase = async function() {
-    if(!confirm("คุณต้องการโอนย้ายข้อมูลจาก database.json ขึ้น Firebase ใช่หรือไม่?")) return;
-    
-    try {
-        const response = await fetch('database.json');
-        const promptsData = await response.json();
-        
-        let successCount = 0;
-        console.log("🚀 กำลังเริ่มอัปโหลด...");
-
-        for (const item of promptsData) {
-            // ใช้ id จาก json เป็นชื่อ Document ID ใน Firebase เลยเพื่อความเป็นระเบียบ
-            await db.collection('prompts').doc(item.id).set(item);
-            console.log(`✅ อัปโหลดสำเร็จ: ${item.title}`);
-            successCount++;
-        }
-        
-        alert(`🎉 ย้ายข้อมูลเสร็จสมบูรณ์! นำเข้า Prompt ทั้งหมด ${successCount} รายการเรียบร้อยแล้ว`);
-    } catch (error) {
-        console.error("❌ Migration Error:", error);
-        alert("เกิดข้อผิดพลาดระหว่างย้ายข้อมูล ดูรายละเอียดใน Console ครับ");
-    }
-}
-
-// ==========================================
-// ระบบจัดการ Prompt สำหรับแอดมิน (Admin Content Management)
-// ==========================================
 async function submitNewPrompt(event) {
-    event.preventDefault(); // ป้องกันหน้าเว็บรีเฟรช
+    event.preventDefault(); 
     
-    // เปลี่ยนปุ่มเป็นสถานะกำลังโหลด
     const btn = event.target.querySelector('button[type="submit"]');
     const originalText = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึกข้อมูล...';
     btn.disabled = true;
 
-    // เตรียมชุดสีและชื่อหมวดหมู่ให้ตรงกับที่เลือก
     const categoryMap = {
         'marketing': { name: 'การตลาด', color: 'badge-marketing' },
         'education': { name: 'การเรียน', color: 'badge-education' },
@@ -881,7 +881,6 @@ async function submitNewPrompt(event) {
     const catId = document.getElementById('pCategory').value;
     const isPremium = document.getElementById('pIsPremium').checked;
     
-    // จัดเตรียมก้อนข้อมูล (Object) ที่จะส่งขึ้น Firebase
     const newPrompt = {
         title: document.getElementById('pTitle').value.trim(),
         categoryId: catId,
@@ -892,95 +891,82 @@ async function submitNewPrompt(event) {
         imageUrl: document.getElementById('pImageUrl').value.trim(),
         isPremium: isPremium,
         unlockPrice: isPremium ? parseInt(document.getElementById('pPrice').value || 0) : 0,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp() // ประทับเวลาสร้าง
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
-    // คลีนข้อมูล: ตัดฟิลด์ที่เว้นว่างไว้ออกไป เพื่อประหยัดพื้นที่ฐานข้อมูล
     Object.keys(newPrompt).forEach(key => {
-        if (newPrompt[key] === "" || newPrompt[key] === undefined) {
-            delete newPrompt[key];
-        }
+        if (newPrompt[key] === "" || newPrompt[key] === undefined) delete newPrompt[key];
     });
 
     try {
-        // ยิงข้อมูลขึ้น Firestore
         await db.collection('prompts').add(newPrompt);
-        
         showToast("✅ เผยแพร่ Prompt ใหม่ขึ้นหน้าเว็บสำเร็จ!");
-        
-        // ล้างค่าในฟอร์มให้เกลี้ยง เตรียมพร้อมสำหรับการพิมพ์เพิ่มอันต่อไป
         event.target.reset();
         document.getElementById('priceZone').style.display = 'none';
-        
     } catch (error) {
         console.error("Error adding prompt: ", error);
         alert("❌ เกิดข้อผิดพลาดในการบันทึกข้อมูลครับ");
     } finally {
-        // คืนสภาพปุ่มกลับมาเหมือนเดิม
         btn.innerHTML = originalText;
         btn.disabled = false;
     }
 }
 
 // ==========================================
-// ระบบหลังบ้าน: ฟังก์ชันเพิ่ม Prompt ใหม่โดย Admin
+// ส่วนที่ 13: ระบบ Community (แชร์ Prompt จากผู้ใช้งาน)
 // ==========================================
-async function submitNewPrompt(event) {
+function openShareModal() {
+    if (!currentUser) return openLoginModal(); 
+    document.getElementById('sharePromptModal').classList.add('show');
+}
+
+function closeShareModal() {
+    document.getElementById('sharePromptModal').classList.remove('show');
+    document.getElementById('userShareForm').reset();
+}
+
+async function submitCommunityPrompt(event) {
     event.preventDefault();
+    if (!currentUser) return;
 
-    // ดึงค่าจากฟอร์ม
-    const title = document.getElementById('pTitle').value;
-    const categoryId = document.getElementById('pCategory').value;
-    const content = document.getElementById('pContent').value;
-    const isPremium = document.getElementById('pIsPremium').checked;
-    const unlockPrice = parseInt(document.getElementById('pPrice').value) || 0;
-
-    // Data Dictionary: กำหนดสี Badge และชื่อหมวดหมู่ให้สอดคล้องกับ UI
-    const categoryData = {
-        'marketing': { name: 'การตลาด', badge: 'badge-marketing' },
-        'education': { name: 'การเรียน', badge: 'badge-education' },
-        'coding': { name: 'การเขียนโค้ด', badge: 'badge-coding' },
-        'creative': { name: 'งานสร้างสรรค์', badge: 'badge-creative' },
-        'productivity': { name: 'การทำงาน', badge: 'badge-productivity' },
-        'image-gen': { name: 'สร้างภาพ AI', badge: 'badge-creative' }
-    };
-
-    // เปลี่ยนสถานะปุ่มตอนกำลังโหลด
-    const submitBtn = event.target.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึกข้อมูล...';
-    submitBtn.disabled = true;
+    const btn = event.target.querySelector('button[type="submit"]');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังส่ง...';
+    btn.disabled = true;
 
     try {
-        // สร้างแพ็กเกจข้อมูลใหม่
         const newPrompt = {
-            title: title,
-            categoryId: categoryId,
-            categoryName: categoryData[categoryId].name,
-            badgeColor: categoryData[categoryId].badge,
-            content: content,
-            isPremium: isPremium,
-            unlockPrice: isPremium ? unlockPrice : 0,
+            title: document.getElementById('shareTitle').value.trim(),
+            content: document.getElementById('shareContent').value.trim(),
+            categoryId: 'community',
+            categoryName: 'จากทางบ้าน',
+            badgeColor: 'badge-community',
+            isPremium: false,
+            unlockPrice: 0,
+            authorName: currentUser.displayName || 'ผู้ใช้ไม่ระบุนาม',
+            authorId: currentUser.uid,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        // โยนขึ้น Cloud (ใช้ .add() เพื่อให้ Firebase สร้าง ID ให้กล่องนี้แบบสุ่มอัตโนมัติ)
         await db.collection('prompts').add(newPrompt);
 
-        // แจ้งเตือนและล้างค่าในฟอร์ม
-        showToast("✅ เพิ่ม Prompt ใหม่เข้าสู่ระบบเรียบร้อยแล้ว!");
-        event.target.reset();
-        document.getElementById('priceDiv').style.display = 'none';
+        // แจกรางวัล 10 Gem ให้คนแชร์ตอนโพสต์สำเร็จ
+        await db.collection('users').doc(currentUser.uid).update({ 
+            gems: firebase.firestore.FieldValue.increment(10) 
+        });
+        
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        updateGemDisplay(userDoc.data().gems);
 
-        // หน้าเว็บจะอัปเดตการ์ดใหม่ให้เห็นทันที เพราะเราใช้ onSnapshot ไว้แล้ว!
+        showToast("🎉 แชร์สำเร็จ! คุณได้รับ 10 Gem");
+        closeShareModal();
 
     } catch (error) {
-        console.error("Error adding prompt:", error);
-        alert("❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง");
+        console.error("Error sharing prompt:", error);
+        alert("❌ เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
     } finally {
-        // คืนค่าปุ่มกลับมาเหมือนเดิม
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
+        btn.innerHTML = originalText;
+        btn.disabled = false;
     }
 }
 
