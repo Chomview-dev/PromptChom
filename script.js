@@ -1022,6 +1022,72 @@ async function submitCommunityPrompt(event) {
     }
 }
 
+// ==========================================
+// ระบบจัดการ Prompt สำหรับแอดมิน (Admin Content Management)
+// ==========================================
+async function submitNewPrompt(event) {
+    event.preventDefault(); // ป้องกันหน้าเว็บรีเฟรช
+    
+    // เปลี่ยนปุ่มเป็นสถานะกำลังโหลด
+    const btn = event.target.querySelector('button[type="submit"]');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึกข้อมูล...';
+    btn.disabled = true;
+
+    // เตรียมชุดสีและชื่อหมวดหมู่ให้ตรงกับที่เลือก
+    const categoryMap = {
+        'marketing': { name: 'การตลาด', color: 'badge-marketing' },
+        'education': { name: 'การเรียน', color: 'badge-education' },
+        'coding': { name: 'การเขียนโค้ด', color: 'badge-coding' },
+        'creative': { name: 'งานสร้างสรรค์', color: 'badge-creative' },
+        'productivity': { name: 'การทำงาน', color: 'badge-productivity' },
+        'image-gen': { name: 'สร้างภาพ AI', color: 'badge-creative' } 
+    };
+
+    const catId = document.getElementById('pCategory').value;
+    const isPremium = document.getElementById('pIsPremium').checked;
+    
+    // จัดเตรียมก้อนข้อมูล (Object) ที่จะส่งขึ้น Firebase
+    const newPrompt = {
+        title: document.getElementById('pTitle').value.trim(),
+        categoryId: catId,
+        categoryName: categoryMap[catId].name,
+        badgeColor: categoryMap[catId].color,
+        description: document.getElementById('pDesc').value.trim(),
+        content: document.getElementById('pContent').value.trim(),
+        imageUrl: document.getElementById('pImageUrl').value.trim(),
+        isPremium: isPremium,
+        unlockPrice: isPremium ? parseInt(document.getElementById('pPrice').value || 0) : 0,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp() // ประทับเวลาสร้าง
+    };
+
+    // คลีนข้อมูล: ตัดฟิลด์ที่เว้นว่างไว้ออกไป เพื่อประหยัดพื้นที่ฐานข้อมูล
+    Object.keys(newPrompt).forEach(key => {
+        if (newPrompt[key] === "" || newPrompt[key] === undefined) {
+            delete newPrompt[key];
+        }
+    });
+
+    try {
+        // ยิงข้อมูลขึ้น Firestore
+        await db.collection('prompts').add(newPrompt);
+        
+        showToast("✅ เผยแพร่ Prompt ใหม่ขึ้นหน้าเว็บสำเร็จ!");
+        
+        // ล้างค่าในฟอร์มให้เกลี้ยง เตรียมพร้อมสำหรับการพิมพ์เพิ่มอันต่อไป
+        event.target.reset();
+        document.getElementById('priceZone').style.display = 'none';
+        
+    } catch (error) {
+        console.error("Error adding prompt: ", error);
+        alert("❌ เกิดข้อผิดพลาดในการบันทึกข้อมูลครับ");
+    } finally {
+        // คืนสภาพปุ่มกลับมาเหมือนเดิม
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
 // เรียกใช้งานฟังก์ชันเริ่มต้น
 initAuth();
 initTheme();
